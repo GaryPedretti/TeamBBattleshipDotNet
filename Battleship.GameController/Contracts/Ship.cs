@@ -78,6 +78,11 @@ namespace Battleship.GameController.Contracts
                 isPlaced = value;
             }
         }
+
+        public bool IsSunk
+        {
+            get { return Positions.TrueForAll((x => x.IsHit));  }
+        }
         #endregion
     }
 }

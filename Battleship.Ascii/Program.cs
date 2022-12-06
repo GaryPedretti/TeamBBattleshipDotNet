@@ -142,6 +142,16 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"                   \  \   /  /");
                     Console.BackgroundColor = standardBackgroundColor;
                 }
+
+                if(enemyFleet.TrueForAll((x => x.IsSunk))) {
+                    Console.WriteLine("You are the winner!");
+                    break;
+                }
+
+                if(myFleet.TrueForAll((x => x.IsSunk))) {
+                    Console.WriteLine("You lost!");
+                    break;
+                }
             }
             while (true);
         }
