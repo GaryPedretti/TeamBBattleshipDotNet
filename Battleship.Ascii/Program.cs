@@ -79,6 +79,11 @@ namespace Battleship.Ascii
                 var standardBackgroundColor = Console.BackgroundColor;
                 
                 Console.WriteLine();
+                Console.BackgroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("================================================");
+                Console.BackgroundColor = standardBackgroundColor;
+                Console.WriteLine();
+                
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Player, it's your turn");
                 Console.WriteLine("Enter coordinates for your shot :");
@@ -107,17 +112,22 @@ namespace Battleship.Ascii
                     Console.ForegroundColor = ConsoleColor.Red;
                 else
                     Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
+                Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "You Missed !");
                 Console.ForegroundColor = standardForegroundColor;
+                
+                Console.WriteLine();
+                Console.BackgroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("================================================");
+                Console.BackgroundColor = standardBackgroundColor;
+                Console.WriteLine();
 
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
                 telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
-                Console.WriteLine();
                 Console.BackgroundColor = isHit ? ConsoleColor.Red : ConsoleColor.Blue;
                 Console.Write("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
                 Console.BackgroundColor = standardBackgroundColor;
-                Console.Write("");
+                Console.WriteLine();
                 if (isHit)
                 {
                     Console.Beep();
