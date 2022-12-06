@@ -116,13 +116,13 @@ namespace Battleship.Ascii
                 Console.ForegroundColor = standardForegroundColor;
                 
                 Console.WriteLine();
+                Console.WriteLine("Enemy Fleet Status");
+                PrintFleetStatus(enemyFleet);
+                Console.WriteLine();
                 Console.BackgroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("================================================");
                 Console.BackgroundColor = standardBackgroundColor;
                 Console.WriteLine();
-
-                Console.WriteLine("Enemy Fleet Status");
-                PrintFleetStatus(enemyFleet);
 
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
@@ -145,9 +145,6 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"                   \  \   /  /");
                     Console.BackgroundColor = standardBackgroundColor;
                 }
-
-                Console.WriteLine("My Fleet Status");
-                PrintFleetStatus(myFleet);
 
                 if(enemyFleet.TrueForAll((x => x.IsSunk))) {
                     Console.WriteLine("You are the winner!");
