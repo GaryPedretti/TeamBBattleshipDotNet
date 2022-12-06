@@ -1,4 +1,6 @@
 ﻿
+using System.Drawing;
+
 namespace Battleship.Ascii
 {
     using System;
@@ -73,16 +75,22 @@ namespace Battleship.Ascii
 
             do
             {
+                var standardForegroundColor = Console.ForegroundColor;
+                var standardBackgroundColor = Console.BackgroundColor;
+                
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Player, it's your turn");
                 Console.WriteLine("Enter coordinates for your shot :");
+                Console.ForegroundColor = standardForegroundColor;
                 var position = ParsePosition(Console.ReadLine());                
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
                 {
                     Console.Beep();
-
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    
                     Console.WriteLine(@"                \         .  ./");
                     Console.WriteLine(@"              \      .:"";'.:..""   /");
                     Console.WriteLine(@"                  (M^^.^~~:.'"").");
@@ -91,19 +99,29 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
                     Console.WriteLine(@"                 -\  \     /  /-");
                     Console.WriteLine(@"                   \  \   /  /");
+                    
+                    Console.ForegroundColor = standardForegroundColor;
                 }
-
+                
+                if (isHit)
+                    Console.ForegroundColor = ConsoleColor.Red;
+                else
+                    Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
+                Console.ForegroundColor = standardForegroundColor;
 
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
                 telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 Console.WriteLine();
-                Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
+                Console.BackgroundColor = isHit ? ConsoleColor.Red : ConsoleColor.Blue;
+                Console.Write("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
+                Console.BackgroundColor = standardBackgroundColor;
+                Console.Write("");
                 if (isHit)
                 {
                     Console.Beep();
-
+                    Console.BackgroundColor = ConsoleColor.Red;
                     Console.WriteLine(@"                \         .  ./");
                     Console.WriteLine(@"              \      .:"";'.:..""   /");
                     Console.WriteLine(@"                  (M^^.^~~:.'"").");
@@ -112,7 +130,7 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
                     Console.WriteLine(@"                 -\  \     /  /-");
                     Console.WriteLine(@"                   \  \   /  /");
-
+                    Console.BackgroundColor = standardBackgroundColor;
                 }
             }
             while (true);
