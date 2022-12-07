@@ -88,8 +88,21 @@ namespace Battleship.Ascii
                 Console.WriteLine("Player, it's your turn");
                 Console.WriteLine("Enter coordinates for your shot :");
                 Console.ForegroundColor = standardForegroundColor;
-                var position = ParsePosition(Console.ReadLine());                
-                var isHit = GameController.CheckIsHit(enemyFleet, position);
+                var userEnty = Console.ReadLine();
+                var position = ParsePosition(userEnty);
+                var isHit = false;
+                var valid = enemyFleet[0].IsValidPosition(userEnty);
+                if (valid)
+                {
+                    isHit = GameController.CheckIsHit(enemyFleet, position);
+                }
+                else
+                {
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Position is outside of playing field!");
+                    Console.ResetColor();
+                    }
+
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
                 {
