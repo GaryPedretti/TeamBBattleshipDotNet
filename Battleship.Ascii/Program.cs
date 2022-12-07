@@ -194,7 +194,7 @@ namespace Battleship.Ascii
 
             foreach (var ship in myFleet)
             {
-                bool isShipValid = false;
+                bool areShipPlacementsValid = false;
                 do {
                     Console.WriteLine();
                     Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
@@ -206,22 +206,21 @@ namespace Battleship.Ascii
                         telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
                     }
 
-                    isShipValid = IsShipValid(ship, myFleet);
+                    areShipPlacementsValid = GameController.AreShipPlacementsValid(ship, myFleet);
 
-                    if (!isShipValid) {
+                    if (!areShipPlacementsValid) {
                         Console.WriteLine();
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.WriteLine("Invalid {0} location! Please try again.", ship.Name);
                         Console.BackgroundColor = standardBackgroundColor;
                         Console.WriteLine();
+                        
+                        ship.Positions = null;
                     }
-                } while (!isShipValid);
+                } while (!areShipPlacementsValid);
             }
         }
 
-        private static bool IsShipValid(Ship ship, IEnumerable<Ship> fleet) {
-            return true;
-        }
 
         private static void PrintFleetStatus(IEnumerable<Ship> ships) {
             Console.WriteLine();
