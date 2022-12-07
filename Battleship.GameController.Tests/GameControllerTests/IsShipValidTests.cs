@@ -12,6 +12,55 @@
     [TestClass]
     public class IsShipValidTests
     {
+
+        [TestMethod]
+        public void LocationA1IsValid()
+        {
+            var ship = new Ship();
+            var result = ship.IsValidPosition("A1");
+            Assert.AreEqual(result, true);
+        }
+        
+        [TestMethod]
+        public void LocationEmptyIsInvalid()
+        {
+            var ship = new Ship();
+            var result = ship.IsValidPosition("");
+            Assert.AreEqual(result, false);
+        }
+        
+        [TestMethod]
+        public void LocationA11IsInvalid()
+        {
+            var ship = new Ship();
+            var result = ship.IsValidPosition("A11");
+            Assert.AreEqual(result, false);
+        }
+        
+        [TestMethod]
+        public void LocationP1IsInvalid()
+        {
+            var ship = new Ship();
+            var result = ship.IsValidPosition("P1");
+            Assert.AreEqual(result, false);
+        }
+        
+        [TestMethod]
+        public void Location11IsInvalid()
+        {
+            var ship = new Ship();
+            var result = ship.IsValidPosition("11");
+            Assert.AreEqual(result, false);
+        }
+
+        [TestMethod]
+        public void LocationAAIsInvalid()
+        {
+            var ship = new Ship();
+            var result = ship.IsValidPosition("AA");
+            Assert.AreEqual(result, false);
+        }
+        
         /// <summary>
         /// The ship is not valid.
         /// </summary>
