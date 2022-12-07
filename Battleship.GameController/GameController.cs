@@ -85,6 +85,38 @@ namespace Battleship.GameController
         /// </returns>
         public static bool IsShipValid(Ship ship)
         {
+            if (ship.Positions.Count != ship.Size)
+                return false;
+                
+            // Sort positions
+
+            // figure out if vertical or horizontal
+            int shipFirstRow = ship.Positions[0].Row;
+            bool isHorizontal = ship.Positions.Count(x => x.Row == shipFirstRow) > 1;
+
+            if (isHorizontal) {
+                ship.Positions.Sort((x,y) => x.Column.CompareTo(y.Column));
+
+                var previousCol = ship.Positions[0].Column;
+                foreach (var position in ship.Positions) {
+                    if (previousCol != ship.Positions[0].Column && (previousCol + 1 != position.Column)) {
+                        return false;
+                    }
+                    previousCol = position.Column;
+                }
+
+            } else {
+                ship.Positions.Sort((x,y) => x.Row.CompareTo(y.Row));
+
+                var previousRow = ship.Positions[0].Row;
+                foreach (var position in ship.Positions) {
+                    if (previousRow != ship.Positions[0].Row && (previousRow + 1 != position.Row)) {
+                        return false;
+                    }
+                    previousRow = position.Row;
+                }
+            }
+
             return ship.Positions.Count == ship.Size;
         }
 
@@ -94,6 +126,7 @@ namespace Battleship.GameController
 
             if (isShipValid) {
 
+                
                 isFleetValid = true;
             }
             return isShipValid && isFleetValid;
