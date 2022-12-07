@@ -190,18 +190,37 @@ namespace Battleship.Ascii
 
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
 
+            var standardBackgroundColor = Console.BackgroundColor;
+
             foreach (var ship in myFleet)
             {
-                Console.WriteLine();
-                Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
-                for (var i = 1; i <= ship.Size; i++)
-                {
-                    Console.WriteLine("Enter position {0} of {1} (i.e A3):", i, ship.Size);
-                    var position = Console.ReadLine();
-                    ship.AddPosition(position);
-                    telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
-                }
+                bool isShipValid = false;
+                do {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
+                    for (var i = 1; i <= ship.Size; i++)
+                    {
+                        Console.WriteLine("Enter position {0} of {1} (i.e A3):", i, ship.Size);
+                        var position = Console.ReadLine();
+                        ship.AddPosition(position);
+                        telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
+                    }
+
+                    isShipValid = IsShipValid(ship, myFleet);
+
+                    if (!isShipValid) {
+                        Console.WriteLine();
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid {0} location! Please try again.", ship.Name);
+                        Console.BackgroundColor = standardBackgroundColor;
+                        Console.WriteLine();
+                    }
+                } while (!isShipValid);
             }
+        }
+
+        private static bool IsShipValid(Ship ship, IEnumerable<Ship> fleet) {
+            return true;
         }
 
         private static void PrintFleetStatus(IEnumerable<Ship> ships) {
