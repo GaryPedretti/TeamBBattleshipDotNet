@@ -124,6 +124,11 @@ namespace Battleship.Ascii
                 Console.BackgroundColor = standardBackgroundColor;
                 Console.WriteLine();
 
+                if(enemyFleet.TrueForAll((x => x.IsSunk))) {
+                    Console.WriteLine("You are the winner!");
+                    break;
+                }
+
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
                 telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
@@ -144,11 +149,6 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"                 -\  \     /  /-");
                     Console.WriteLine(@"                   \  \   /  /");
                     Console.BackgroundColor = standardBackgroundColor;
-                }
-
-                if(enemyFleet.TrueForAll((x => x.IsSunk))) {
-                    Console.WriteLine("You are the winner!");
-                    break;
                 }
 
                 if(myFleet.TrueForAll((x => x.IsSunk))) {
