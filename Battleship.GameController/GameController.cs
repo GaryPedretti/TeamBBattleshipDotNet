@@ -88,6 +88,17 @@ namespace Battleship.GameController
             return ship.Positions.Count == ship.Size;
         }
 
+        public static bool AreShipPlacementsValid(Ship ship, IEnumerable<Ship> fleet) {
+            var isShipValid = IsShipValid(ship);
+            bool isFleetValid = false;
+
+            if (isShipValid) {
+
+                isFleetValid = true;
+            }
+            return isShipValid && isFleetValid;
+        }
+
         public static Position GetRandomPosition(int size)
         {
             var random = new Random();

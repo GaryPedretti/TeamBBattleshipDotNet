@@ -124,6 +124,11 @@ namespace Battleship.Ascii
                 Console.BackgroundColor = standardBackgroundColor;
                 Console.WriteLine();
 
+                if(enemyFleet.TrueForAll((x => x.IsSunk))) {
+                    Console.WriteLine("You are the winner!");
+                    break;
+                }
+
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
                 telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
@@ -190,6 +195,8 @@ namespace Battleship.Ascii
 
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
 
+            var standardBackgroundColor = Console.BackgroundColor;
+
             foreach (var ship in myFleet)
             {
                 Console.WriteLine();
@@ -215,6 +222,30 @@ namespace Battleship.Ascii
                         Console.ResetColor();
                     }
                 }
+                bool areShipPlacementsValid = false;
+                do {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
+                    for (var i = 1; i <= ship.Size; i++)
+                    {
+                        Console.WriteLine("Enter position {0} of {1} (i.e A3):", i, ship.Size);
+                        var position = Console.ReadLine();
+                        ship.AddPosition(position);
+                        telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
+                    }
+
+                    areShipPlacementsValid = GameController.AreShipPlacementsValid(ship, myFleet);
+
+                    if (!areShipPlacementsValid) {
+                        Console.WriteLine();
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid {0} location! Please try again.", ship.Name);
+                        Console.BackgroundColor = standardBackgroundColor;
+                        Console.WriteLine();
+                        
+                        ship.Positions = null;
+                    }
+                } while (!areShipPlacementsValid);
             }
         }
 
