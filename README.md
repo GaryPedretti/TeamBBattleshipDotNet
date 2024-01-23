@@ -22,7 +22,7 @@ You can now run the game with
 dotnet run --project .\Battleship.Ascii\Battleship.Ascii.csproj
 
 ```GitPod:
-dotnet run --project /workspace/TeamABattleshipDotNet/Battleship.Ascii/Battleship.Ascii.csproj
+dotnet run --project /workspace/TeamBBattleshipDotNet/Battleship.Ascii/Battleship.Ascii.csproj
 
 ```
 
