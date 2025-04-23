@@ -93,9 +93,8 @@ namespace Battleship.Ascii
                         var sunkShip = GameController.IsShipSunk(ship);
                         if (sunkShip == true)
                         {
-                            enemyFleet.Remove(ship);
-                            Console.WriteLine("Oh no! The computer sunk your {0}!", ship.Name);
-                            telemetryClient.TrackEvent("Computer_SunkShip", new Dictionary<string, string>() { { "Ship", ship.Name } });
+                            Console.WriteLine("Oh yeah! You sunk the computer's {0}!", ship.Name);
+                            telemetryClient.TrackEvent("Player_SunkShip", new Dictionary<string, string>() { { "Ship", ship.Name } });
                         }
                     }
                     Console.Beep();
