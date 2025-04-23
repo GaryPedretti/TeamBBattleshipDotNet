@@ -4,6 +4,7 @@ namespace Battleship.Ascii
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using Battleship.Ascii.TelemetryClient;
     using Battleship.GameController;
     using Battleship.GameController.Contracts;
@@ -76,7 +77,8 @@ namespace Battleship.Ascii
                 Console.WriteLine();
                 Console.WriteLine("Player, it's your turn");
                 Console.WriteLine("Enter coordinates for your shot :");
-                var position = ParsePosition(Console.ReadLine());                
+
+                var position = ParsePosition(GetValidateInput());                
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
@@ -116,6 +118,37 @@ namespace Battleship.Ascii
                 }
             }
             while (true);
+        }
+
+        public static string GetValidateInput()
+        {
+            string input = "";
+            bool validInput = false;
+            do{
+                input = Console.ReadLine();
+                validInput = IsValidInput(input);
+                if(!validInput)
+                {
+                    Console.WriteLine("Miss!");
+                    Console.WriteLine("You've entered and Invalid position. Try Again!");
+                }
+                
+            } while(!validInput);
+
+            return input;
+        }
+
+        public static bool IsValidInput(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            // Trim extra spaces
+            input = input.Trim();
+
+            // Use Regex pattern to validate: letter [A-Ha-h] followed by a digit [1-8]
+            string pattern = @"^[A-Ha-h][1-8]$";
+            return Regex.IsMatch(input, pattern);
         }
 
         public static Position ParsePosition(string input)
