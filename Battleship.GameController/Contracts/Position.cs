@@ -56,7 +56,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var position = obj as Position;
             if (position == null)
@@ -65,6 +65,11 @@
             }
 
             return position.Column == Column && position.Row == Row;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Column, Row);
         }
 
         public override string ToString()
