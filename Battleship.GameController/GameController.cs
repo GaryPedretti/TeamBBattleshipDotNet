@@ -58,7 +58,52 @@ namespace Battleship.GameController
         /// <summary>
         ///     The initialize ships.
         /// </summary>
+        /// <summary>
+        /// Checks if the ship is sunk.
+        /// </summary>
+        /// <param name="ship">
+        /// The ship.
+        /// </param>
+        /// <param name="hits">
+        /// The list of hit positions.
+        /// </param>
         /// <returns>
+        /// True if the ship is sunk, else false.
+        /// </returns>
+        private static readonly List<Position> Hits = new List<Position>();
+
+        public static bool IsShipSunk(Ship ship)
+        {
+            if (ship == null)
+            {
+            throw new ArgumentNullException(nameof(ship));
+            }
+
+            foreach (var position in ship.Positions)
+            {
+            if (!Hits.Contains(position))
+            {
+                return false;
+            }
+            }
+
+            return true;
+        }
+
+        public static void RecordHit(Position hit)
+        {
+            if (hit == null)
+            {
+            throw new ArgumentNullException(nameof(hit));
+            }
+
+            Hits.Add(hit);
+        }
+        public static void EraseHits()
+        {
+            Hits.Clear();
+        }
+
         ///     The <see cref="IEnumerable" />.
         /// </returns>
         public static IEnumerable<Ship> InitializeShips()

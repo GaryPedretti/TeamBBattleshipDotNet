@@ -79,5 +79,49 @@
         {
             GameController.CheckIsHit(null, new Position(Letters.H, 1));
         }
+        [TestMethod]
+        public void ShouldReturnTrueIfShipIsSunk()
+        {
+            var ship = new Ship { Size = 3 };
+            ship.Positions.Add(new Position(Letters.A, 1) );
+            ship.Positions.Add(new Position(Letters.A, 2) );
+            ship.Positions.Add(new Position(Letters.A, 3));
+            GameController.EraseHits();
+            GameController.RecordHit(ship.Positions[0]);
+            GameController.RecordHit(ship.Positions[1]);
+            GameController.RecordHit(ship.Positions[2]);
+            var result = GameController.IsShipSunk(ship);
+            Assert.IsTrue(result);
+        }
+
+        /// <summary>
+        /// The should return false if ship is not sunk.
+        /// </summary>
+        [TestMethod]
+        public void ShouldReturnFalseIfShipIsNotSunk()
+        {
+            var ship = new Ship { Size = 3 };
+            ship.Positions.Add(new Position(Letters.A, 1));
+            ship.Positions.Add(new Position(Letters.A, 2));
+            ship.Positions.Add(new Position(Letters.A, 3));
+            GameController.EraseHits();
+            GameController.RecordHit(ship.Positions[0]);
+            GameController.RecordHit(ship.Positions[2]);
+
+            var result = GameController.IsShipSunk(ship);
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// The throw exception if ship is null.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ThrowExceptionIfShipSunkcCheckIsNull()
+        {
+            GameController.IsShipSunk(null);
+        }      
     }
+    
+
 }
