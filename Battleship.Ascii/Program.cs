@@ -78,7 +78,7 @@ namespace Battleship.Ascii
                 Console.WriteLine("Player, it's your turn");
                 Console.WriteLine("Enter coordinates for your shot :");
 
-                var position = ParsePosition(GetValidateInput());                
+                var position = ParsePosition(GetValidatedInput());                
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
@@ -120,7 +120,7 @@ namespace Battleship.Ascii
             while (true);
         }
 
-        public static string GetValidateInput()
+        public static string GetValidatedInput()
         {
             string input = "";
             bool validInput = false;
