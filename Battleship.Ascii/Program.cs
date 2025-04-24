@@ -82,12 +82,6 @@ namespace Battleship.Ascii
                 if (isHit)
                 {
                     GameController.RecordHit(position);
-                    if (!enemyFleet.Any())
-                    {
-                        Console.WriteLine("You are the winner!");
-                        telemetryClient.TrackEvent("Game_Over", new Dictionary<string, string>() { { "Result", "Won" } });
-                        Environment.Exit(0);
-                    }
                     foreach (var ship in enemyFleet.ToList())
                     {
                         var sunkShip = GameController.IsShipSunk(ship);
@@ -95,7 +89,14 @@ namespace Battleship.Ascii
                         {
                             Console.WriteLine("Oh yeah! You sunk the computer's {0}!", ship.Name);
                             telemetryClient.TrackEvent("Player_SunkShip", new Dictionary<string, string>() { { "Ship", ship.Name } });
+                            enemyFleet.Remove(ship);
                         }
+                    }
+                    if (!enemyFleet.Any())
+                    {
+                        Console.WriteLine("You are the winner!");
+                        telemetryClient.TrackEvent("Game_Over", new Dictionary<string, string>() { { "Result", "Won" } });
+                        Environment.Exit(0);
                     }
                     Console.Beep();
 
@@ -119,21 +120,21 @@ namespace Battleship.Ascii
                 if (isHit)
                 {
                     GameController.RecordHit(position);
-                    if (!myFleet.Any())
-                    {
-                        Console.WriteLine("You lost!");
-                        telemetryClient.TrackEvent("Game_Over", new Dictionary<string, string>() { { "Result", "Lost" } });
-                        Environment.Exit(0);
-                    }
                     foreach (var ship in myFleet.ToList())
                     {
                         var sunkShip = GameController.IsShipSunk(ship);
                         if (sunkShip == true)
                         {
-                            myFleet.Remove(ship);
                             Console.WriteLine("Oh no! The computer sunk your {0}!", ship.Name);
                             telemetryClient.TrackEvent("Computer_SunkShip", new Dictionary<string, string>() { { "Ship", ship.Name } });
+                            myFleet.Remove(ship);
                         }
+                    }
+                   if (!myFleet.Any())
+                    {
+                        Console.WriteLine("You lost!");
+                        telemetryClient.TrackEvent("Game_Over", new Dictionary<string, string>() { { "Result", "Lost" } });
+                        Environment.Exit(0);
                     }
                     Console.Beep();
 
