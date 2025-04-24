@@ -99,6 +99,11 @@ namespace Battleship.GameController
 
             Hits.Add(hit);
         }
+        public static void EraseHits()
+        {
+            Hits.Clear();
+        }
+
         ///     The <see cref="IEnumerable" />.
         /// </returns>
         public static IEnumerable<Ship> InitializeShips()
