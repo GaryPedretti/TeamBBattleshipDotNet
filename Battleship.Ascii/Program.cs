@@ -120,7 +120,7 @@ namespace Battleship.Ascii
                     }
                     else if (input.Contains("m"))
                     {
-                        Console.WriteLine("Here is the grid");
+                        PrintBattleshipGrid(gameBoard);  
                     }
                     else
                     {
@@ -142,6 +142,7 @@ namespace Battleship.Ascii
                     }
                 }while(!isGoodPosition && !quit);
                 isGoodPosition = false;
+                
                 if (!quit)
                 {
                     var isHit = GameController.CheckIsHit(enemyFleet, position);
