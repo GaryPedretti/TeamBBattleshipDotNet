@@ -59,7 +59,29 @@ namespace Battleship.Ascii
             }
 
         }
+        private static void PrintBattleshipGrid(int[,] grid)
+        {
+            int rows = grid.GetLength(0);
+            int cols = grid.GetLength(1);
 
+            Console.Write("  ");
+            for (int c = 0; c < cols; c++)
+            {
+                char colLetter = (char)('A' + c);
+                Console.Write($" {colLetter}");
+            }
+            Console.WriteLine();
+
+            for (int r = 0; r < rows; r++)
+            {
+                Console.Write($"{r + 1,2}");
+                for (int c = 0; c < cols; c++)
+                {
+                    Console.Write($" {grid[r, c]}");
+                }
+                Console.WriteLine();
+            }
+        }
         private static void StartGame()
         {
             gameBoard = new int[8, 8];
@@ -78,13 +100,12 @@ namespace Battleship.Ascii
             Console.WriteLine(@"   \    \_/");
             Console.WriteLine(@"    """"""""");
             Console.ResetColor();
-
+            bool isGoodPosition = false;
+            var position = ParsePosition("a0");
             do
             {
-                               
+                PrintBattleshipGrid(gameBoard);               
                 //SAM
-                bool isGoodPosition = false;
-                var position = ParsePosition("a0");
                 do{
                     Console.WriteLine();
                     Console.WriteLine("Player, it's your turn");
@@ -120,6 +141,7 @@ namespace Battleship.Ascii
                         Console.WriteLine("BAD POSITION, have already guessed, try again");
                     }
                 }while(!isGoodPosition );
+                isGoodPosition = false;
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
@@ -135,20 +157,31 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"                 -\  \     /  /-");
                     Console.WriteLine(@"                   \  \   /  /");
                     Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine();
+                    Console.WriteLine("Yeah! Nice Hit !");
 
+                } else {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("    *     .     *   ");
+                    Console.WriteLine("        *   .       ");
+                    Console.WriteLine("   SPLASH! You missed!");
+                    Console.WriteLine("        ~~~~~~       ");
+                    Console.WriteLine("     ~~~~  ~~~~      ");
+                    Console.WriteLine("  ~~~~      ~~~~     ");
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine();
+                    Console.WriteLine("Miss");
+                    Console.ResetColor();
                 }
-                
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine();
-                Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
-                Console.ResetColor();
 
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
                 telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine();
-                Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
+                Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
                 Console.ResetColor();
                 if (isHit)
                 {
@@ -163,12 +196,28 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"                 -\  \     /  /-");
                     Console.WriteLine(@"                   \  \   /  /");
                     Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine();
+                    Console.WriteLine("They've hit your ship !");
 
+                } else {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("    *     .     *   ");
+                    Console.WriteLine("        *   .       ");
+                    Console.WriteLine("   SPLASH! They missed!");
+                    Console.WriteLine("        ~~~~~~       ");
+                    Console.WriteLine("     ~~~~  ~~~~      ");
+                    Console.WriteLine("  ~~~~      ~~~~     ");
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine();
+                    Console.WriteLine("Miss");
+                    Console.ResetColor();
                 }
-            }
-            while (quit == false);
+            }while (true);
         }
 
+        
         private static char NumberToLetter(int number)
         {
             return (char)('A' + number);
