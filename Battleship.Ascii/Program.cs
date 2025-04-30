@@ -140,79 +140,82 @@ namespace Battleship.Ascii
                         }
                         Console.WriteLine("BAD POSITION, have already guessed, try again");
                     }
-                }while(!isGoodPosition );
+                }while(!isGoodPosition && !quit);
                 isGoodPosition = false;
-                var isHit = GameController.CheckIsHit(enemyFleet, position);
-                telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
-                if (isHit)
+                if (!quit)
                 {
-                    Console.Beep();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(@"                \         .  ./");
-                    Console.WriteLine(@"              \      .:"";'.:..""   /");
-                    Console.WriteLine(@"                  (M^^.^~~:.'"").");
-                    Console.WriteLine(@"            -   (/  .    . . \ \)  -");
-                    Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
-                    Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
-                    Console.WriteLine(@"                 -\  \     /  /-");
-                    Console.WriteLine(@"                   \  \   /  /");
-                    Console.ResetColor();
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine();
-                    Console.WriteLine("Yeah! Nice Hit !");
+                    var isHit = GameController.CheckIsHit(enemyFleet, position);
+                    telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
+                    if (isHit)
+                    {
+                        Console.Beep();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(@"                \         .  ./");
+                        Console.WriteLine(@"              \      .:"";'.:..""   /");
+                        Console.WriteLine(@"                  (M^^.^~~:.'"").");
+                        Console.WriteLine(@"            -   (/  .    . . \ \)  -");
+                        Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
+                        Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
+                        Console.WriteLine(@"                 -\  \     /  /-");
+                        Console.WriteLine(@"                   \  \   /  /");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("Yeah! Nice Hit !");
 
-                } else {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("    *     .     *   ");
-                    Console.WriteLine("        *   .       ");
-                    Console.WriteLine("   SPLASH! You missed!");
-                    Console.WriteLine("        ~~~~~~       ");
-                    Console.WriteLine("     ~~~~  ~~~~      ");
-                    Console.WriteLine("  ~~~~      ~~~~     ");
-                    Console.ResetColor();
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine();
-                    Console.WriteLine("Miss");
-                    Console.ResetColor();
-                }
+                    } else {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("    *     .     *   ");
+                        Console.WriteLine("        *   .       ");
+                        Console.WriteLine("   SPLASH! You missed!");
+                        Console.WriteLine("        ~~~~~~       ");
+                        Console.WriteLine("     ~~~~  ~~~~      ");
+                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("Miss");
+                        Console.ResetColor();
+                    }
 
-                position = GetRandomPosition();
-                isHit = GameController.CheckIsHit(myFleet, position);
-                telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine();
-                Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
-                Console.ResetColor();
-                if (isHit)
-                {
-                    Console.Beep();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(@"                \         .  ./");
-                    Console.WriteLine(@"              \      .:"";'.:..""   /");
-                    Console.WriteLine(@"                  (M^^.^~~:.'"").");
-                    Console.WriteLine(@"            -   (/  .    . . \ \)  -");
-                    Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
-                    Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
-                    Console.WriteLine(@"                 -\  \     /  /-");
-                    Console.WriteLine(@"                   \  \   /  /");
-                    Console.ResetColor();
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    position = GetRandomPosition();
+                    isHit = GameController.CheckIsHit(myFleet, position);
+                    telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine();
-                    Console.WriteLine("They've hit your ship !");
+                    Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
+                    Console.ResetColor();
+                    if (isHit)
+                    {
+                        Console.Beep();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(@"                \         .  ./");
+                        Console.WriteLine(@"              \      .:"";'.:..""   /");
+                        Console.WriteLine(@"                  (M^^.^~~:.'"").");
+                        Console.WriteLine(@"            -   (/  .    . . \ \)  -");
+                        Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
+                        Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
+                        Console.WriteLine(@"                 -\  \     /  /-");
+                        Console.WriteLine(@"                   \  \   /  /");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("They've hit your ship !");
 
-                } else {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("    *     .     *   ");
-                    Console.WriteLine("        *   .       ");
-                    Console.WriteLine("   SPLASH! They missed!");
-                    Console.WriteLine("        ~~~~~~       ");
-                    Console.WriteLine("     ~~~~  ~~~~      ");
-                    Console.WriteLine("  ~~~~      ~~~~     ");
-                    Console.ResetColor();
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine();
-                    Console.WriteLine("Miss");
-                    Console.ResetColor();
+                    } else {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("    *     .     *   ");
+                        Console.WriteLine("        *   .       ");
+                        Console.WriteLine("   SPLASH! They missed!");
+                        Console.WriteLine("        ~~~~~~       ");
+                        Console.WriteLine("     ~~~~  ~~~~      ");
+                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("Miss");
+                        Console.ResetColor();
+                    }
                 }
             }while (quit == false);
         }
