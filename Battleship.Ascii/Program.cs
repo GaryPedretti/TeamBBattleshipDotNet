@@ -111,6 +111,7 @@ namespace Battleship.Ascii
                     Console.WriteLine("Player, it's your turn");
                     Console.WriteLine("Enter coordinates for your shot :");
 
+
                     position = ParsePosition(Console.ReadLine());
                     for (int i = 0; i < gameBoard.GetLength(0); i++)
                     {
