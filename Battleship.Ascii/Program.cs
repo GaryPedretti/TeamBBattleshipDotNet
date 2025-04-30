@@ -15,12 +15,11 @@ namespace Battleship.Ascii
         private static List<Ship> enemyFleet;
 
         private static ITelemetryClient telemetryClient;
-
         static void Main()
         {
             telemetryClient = new ApplicationInsightsTelemetryClient();
             telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET"} });
-
+            
             try
             {
                 Console.Title = "Battleship";
@@ -59,6 +58,8 @@ namespace Battleship.Ascii
 
         private static void StartGame()
         {
+            //ARRAY MAKE
+            int[,] board = new int[8, 8];
             Console.Clear();
             Console.WriteLine("                  __");
             Console.WriteLine(@"                 /  \");
@@ -73,11 +74,32 @@ namespace Battleship.Ascii
 
             do
             {
-                Console.WriteLine();
-                Console.WriteLine("Player, it's your turn");
-                Console.WriteLine("Enter coordinates for your shot :");
-                var position = ParsePosition(Console.ReadLine());                
-                var isHit = GameController.CheckIsHit(enemyFleet, position);
+                               
+                //SAM
+                bool isGoodPosition = false;
+                var isHit = false;
+                do{
+                    Console.WriteLine();
+                    Console.WriteLine("Player, it's your turn");
+                    Console.WriteLine("Enter coordinates for your shot :");
+
+                    var newPosition = ParsePosition(Console.ReadLine()); 
+                    for (int i = 0; i < board.GetLength(0); i++)
+                    {
+                        char tempLetter = NumberToLetter(i);
+                        for (int j = 0; j < board.GetLength(1); j++)
+                        {
+                            if(board[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == newPosition)
+                            {
+                                isGoodPosition = true;
+                                break;
+                            }
+                        }
+                    }
+                    Console.WriteLine("BAD POSITION, have already guessed");
+                    isHit = GameController.CheckIsHit(enemyFleet, newPosition);
+                }while(!isGoodPosition);
+                //var isHit = GameController.CheckIsHit(enemyFleet, newPosition);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
                 {
@@ -116,6 +138,11 @@ namespace Battleship.Ascii
                 }
             }
             while (true);
+        }
+
+        private char NumberToLetter(int number)
+        {
+            return (char)('A' + number);
         }
 
         public static Position ParsePosition(string input)
