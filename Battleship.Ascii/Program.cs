@@ -112,7 +112,6 @@ namespace Battleship.Ascii
 
                     string input = Console.ReadLine().Trim();
 
-                    Console.Clear();
 
                     if (input.Contains("exit"))
                     {
@@ -146,6 +145,8 @@ namespace Battleship.Ascii
                     
                 }while(!isGoodPosition && !quit);
                 isGoodPosition = false;
+                
+                Console.Clear();
                 
                 if (!quit)
                 {
