@@ -76,9 +76,10 @@ namespace Battleship.Ascii
             {
                 Console.WriteLine();
                 Console.WriteLine("Player, it's your turn");
-                Console.WriteLine("Enter coordinates for your shot :");
-                var position = ParsePosition(Console.ReadLine());                
+                Console.WriteLine("Enter coordinates for your shot, m to show Grid, or exit to quit :");
+                var position = ParsePosition(Console.ReadLine());                 
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
+
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
                 {
