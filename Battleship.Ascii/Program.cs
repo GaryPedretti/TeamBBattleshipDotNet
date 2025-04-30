@@ -165,12 +165,16 @@ namespace Battleship.Ascii
 
                     } else {
                         Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("    *     .     *   ");
-                        Console.WriteLine("        *   .       ");
-                        Console.WriteLine("   SPLASH! You missed!");
-                        Console.WriteLine("        ~~~~~~       ");
-                        Console.WriteLine("     ~~~~  ~~~~      ");
-                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.WriteLine("             .       ");
+                        Console.WriteLine("       .         .   ");
+                        Console.WriteLine("          SPLASH!    ");
+                        Console.WriteLine("     .     .     .   ");
+                        Console.WriteLine("     \\    |    /     ");
+                        Console.WriteLine("      )   |   (      ");
+                        Console.WriteLine("     /    |    \\     ");
+                        Console.WriteLine("         / \\         ");
+                        Console.WriteLine(" ~~~~  ~~~~~~~  ~~~~ ");
+                        Console.WriteLine("    ~~~     ~~~      ");                     
                         Console.ResetColor();
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
@@ -204,12 +208,16 @@ namespace Battleship.Ascii
 
                     } else {
                         Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("    *     .     *   ");
-                        Console.WriteLine("        *   .       ");
-                        Console.WriteLine("   SPLASH! They missed!");
-                        Console.WriteLine("        ~~~~~~       ");
-                        Console.WriteLine("     ~~~~  ~~~~      ");
-                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.WriteLine("             .       ");
+                        Console.WriteLine("       .         .   ");
+                        Console.WriteLine("          SPLASH!    ");
+                        Console.WriteLine("     .     .     .   ");
+                        Console.WriteLine("     \\    |    /     ");
+                        Console.WriteLine("      )   |   (      ");
+                        Console.WriteLine("     /    |    \\     ");
+                        Console.WriteLine("         / \\         ");
+                        Console.WriteLine(" ~~~~  ~~~~~~~  ~~~~ ");
+                        Console.WriteLine("    ~~~     ~~~      "); 
                         Console.ResetColor();
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
