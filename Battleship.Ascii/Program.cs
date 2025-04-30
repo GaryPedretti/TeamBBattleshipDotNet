@@ -26,7 +26,7 @@ namespace Battleship.Ascii
                 Console.Title = "Battleship";
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.Clear();
-
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("                                     |__");
                 Console.WriteLine(@"                                     |\/");
                 Console.WriteLine("                                     ---");
@@ -60,6 +60,7 @@ namespace Battleship.Ascii
         private static void StartGame()
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("                  __");
             Console.WriteLine(@"                 /  \");
             Console.WriteLine("           .-.  |    |");
@@ -70,19 +71,22 @@ namespace Battleship.Ascii
             Console.WriteLine(@"  |     /_\'");
             Console.WriteLine(@"   \    \_/");
             Console.WriteLine(@"    """"""""");
+            Console.ResetColor();
 
             do
             {
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Player, it's your turn");
                 Console.WriteLine("Enter coordinates for your shot :");
+                Console.ResetColor(); 
                 var position = ParsePosition(Console.ReadLine());                
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
                 {
                     Console.Beep();
-
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(@"                \         .  ./");
                     Console.WriteLine(@"              \      .:"";'.:..""   /");
                     Console.WriteLine(@"                  (M^^.^~~:.'"").");
@@ -91,19 +95,26 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
                     Console.WriteLine(@"                 -\  \     /  /-");
                     Console.WriteLine(@"                   \  \   /  /");
-                }
+                    Console.ResetColor();
 
+                }
+                
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine();
                 Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
+                Console.ResetColor();
 
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
                 telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine();
                 Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
+                Console.ResetColor();
                 if (isHit)
                 {
                     Console.Beep();
-
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(@"                \         .  ./");
                     Console.WriteLine(@"              \      .:"";'.:..""   /");
                     Console.WriteLine(@"                  (M^^.^~~:.'"").");
@@ -112,6 +123,7 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
                     Console.WriteLine(@"                 -\  \     /  /-");
                     Console.WriteLine(@"                   \  \   /  /");
+                    Console.ResetColor();
 
                 }
             }
@@ -147,11 +159,14 @@ namespace Battleship.Ascii
         {
             myFleet = GameController.InitializeShips().ToList();
 
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
 
             foreach (var ship in myFleet)
             {
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
                 for (var i = 1; i <= ship.Size; i++)
                 {
