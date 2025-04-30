@@ -94,6 +94,9 @@ namespace Battleship.Ascii
                 }
 
                 Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
+                if(GameController.AllShipsSunk(enemyFleet)){
+                    Console.WriteLine("Amazing! You sunk all Enemy ships");
+                }
 
                 position = GetRandomPosition();
                 isHit = GameController.CheckIsHit(myFleet, position);
@@ -115,8 +118,12 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"                   \  \   /  /");
 
                 }
+                if(GameController.AllShipsSunk(myFleet)){
+                    Console.WriteLine("Loser! All your ships are sunk");
+                }
 
             }
+            
             while (true);
         }
 

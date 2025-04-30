@@ -48,6 +48,7 @@ namespace Battleship.GameController
                     if (position.Equals(shot))
                     {
                         position.Hit();
+                        CheckIsSunk(ship);
                         return true;
                     }
                 }
@@ -87,7 +88,7 @@ namespace Battleship.GameController
             ship.IsSunk = true;
         }
 
-        public static bool CheckFleet(IEnumerable<Ship> ships)
+        public static bool AllShipsSunk(IEnumerable<Ship> ships)
         {
             if (ships == null)
             {
