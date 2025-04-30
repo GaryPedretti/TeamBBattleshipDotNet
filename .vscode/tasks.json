@@ -9,7 +9,12 @@
                 "build",
                 "${workspaceFolder}/Battleship.Ascii/Battleship.Ascii.csproj"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "isBuildCommand": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
