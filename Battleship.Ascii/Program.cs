@@ -51,11 +51,7 @@ namespace Battleship.Ascii
             }
             catch (Exception e)
             {
-                Console.WriteLine("A serious problem occured. The application cannot continue and will be closed.");
-                telemetryClient.TrackException(e);
-                Console.WriteLine("");
-                Console.WriteLine("Error details:");
-                throw new Exception("Fatal error", e);
+                CrashExit(e);
             }
 
         }
@@ -140,13 +136,13 @@ namespace Battleship.Ascii
                         for (int i = 0; i < gameBoard.GetLength(0); i++)
                         {
                             char tempLetter = NumberToLetter(i);
-                            for (int j = 0; j < gameBoard.GetLength(1); j++)
+                            for (int j = 1; j < gameBoard.GetLength(1); j++)
                             {
-                                if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
+                                 if (gameBoard[i, j-1] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
                                 {
                                     isGoodPosition = true;
-                                    gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
-                                    break;
+                                    // 1 is something 2 is somethinggit push --set-upstream origin sam-sprint2
+                                    gameBoard[i, j-1] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
                                 }
                             }
                         }
@@ -181,12 +177,16 @@ namespace Battleship.Ascii
 
                     } else {
                         Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("    *     .     *   ");
-                        Console.WriteLine("        *   .       ");
-                        Console.WriteLine("   SPLASH! You missed!");
-                        Console.WriteLine("        ~~~~~~       ");
-                        Console.WriteLine("     ~~~~  ~~~~      ");
-                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.WriteLine("             .       ");
+                        Console.WriteLine("       .         .   ");
+                        Console.WriteLine("          SPLASH!    ");
+                        Console.WriteLine("     .     .     .   ");
+                        Console.WriteLine("     \\    |    /     ");
+                        Console.WriteLine("      )   |   (      ");
+                        Console.WriteLine("     /    |    \\     ");
+                        Console.WriteLine("         / \\         ");
+                        Console.WriteLine(" ~~~~  ~~~~~~~  ~~~~ ");
+                        Console.WriteLine("    ~~~     ~~~      ");                     
                         Console.ResetColor();
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
@@ -198,7 +198,7 @@ namespace Battleship.Ascii
                     telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine();
-                    Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
+                    Console.WriteLine("Computer shot in {0}{1}", position.Column, position.Row);
                     Console.ResetColor();
                     if (isHit)
                     {
@@ -219,12 +219,16 @@ namespace Battleship.Ascii
 
                     } else {
                         Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("    *     .     *   ");
-                        Console.WriteLine("        *   .       ");
-                        Console.WriteLine("   SPLASH! They missed!");
-                        Console.WriteLine("        ~~~~~~       ");
-                        Console.WriteLine("     ~~~~  ~~~~      ");
-                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.WriteLine("             .       ");
+                        Console.WriteLine("       .         .   ");
+                        Console.WriteLine("          SPLASH!    ");
+                        Console.WriteLine("     .     .     .   ");
+                        Console.WriteLine("     \\    |    /     ");
+                        Console.WriteLine("      )   |   (      ");
+                        Console.WriteLine("     /    |    \\     ");
+                        Console.WriteLine("         / \\         ");
+                        Console.WriteLine(" ~~~~  ~~~~~~~  ~~~~ ");
+                        Console.WriteLine("    ~~~     ~~~      "); 
                         Console.ResetColor();
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
@@ -244,7 +248,24 @@ namespace Battleship.Ascii
             }while (quit == false);
         }
 
+        private static void CrashExit(Exception e) {
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("A serious problem occured. The application cannot continue and will be closed.");
+            Console.WriteLine("Error Details: {0}", e.ToString());
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
+            Environment.Exit(0);
+        }
 
+        private static void GameOver() {
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Game over. Press any key to exit...");
+            Console.ReadKey();
+            Environment.Exit(0);
+        }
+      
         private static char NumberToLetter(int number)
         {
             return (char)('A' + number);
