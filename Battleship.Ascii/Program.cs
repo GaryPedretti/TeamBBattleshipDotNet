@@ -114,7 +114,7 @@ namespace Battleship.Ascii
                         char tempLetter = NumberToLetter(i);
                         for (int j = 0; j < gameBoard.GetLength(1); j++)
                         {
-                            if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
+                            if(gameBoard[i, j] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"),position))
                             {
                                 isGoodPosition = true;
                                 gameBoard[i, j] = (GameController.CheckIsHit(enemyFleet, position)?1:2);
@@ -166,7 +166,7 @@ namespace Battleship.Ascii
                 telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine();
-                Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
+                Console.WriteLine("Computer shot in {0}{1}", position.Column, position.Row);
                 Console.ResetColor();
                 if (isHit)
                 {
@@ -213,6 +213,11 @@ namespace Battleship.Ascii
             var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
             var number = int.Parse(input.Substring(1, 1));
             return new Position(letter, number);
+        }
+
+        private static bool ArePositionsEqual(Position a, Position b)
+        {
+            return a.Column == b.Column && a.Row == b.Row;
         }
 
         private static Position GetRandomPosition()
