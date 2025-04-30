@@ -112,6 +112,8 @@ namespace Battleship.Ascii
 
                     string input = Console.ReadLine().Trim();
 
+                    Console.Clear();
+
                     if (input.Contains("exit"))
                     {
                         Console.WriteLine("Thanks for Playing!");
