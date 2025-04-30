@@ -143,7 +143,7 @@ namespace Battleship.Ascii
                                     isGoodPosition = true;
                                     // 1 is hit 
                                     // 2 is miss
-                                    gameBoard[i, j-1] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
+                                    gameBoard[i, j] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
                                 }
                             }
                         }
