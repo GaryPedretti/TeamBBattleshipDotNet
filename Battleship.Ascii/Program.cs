@@ -7,6 +7,7 @@ namespace Battleship.Ascii
     using Battleship.Ascii.TelemetryClient;
     using Battleship.GameController;
     using Battleship.GameController.Contracts;
+    using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
 
     public class Program
     {
@@ -60,6 +61,7 @@ namespace Battleship.Ascii
         {
             //ARRAY MAKE
             int[,] board = new int[8, 8];
+            bool quit = false;
             Console.Clear();
             Console.WriteLine("                  __");
             Console.WriteLine(@"                 /  \");
@@ -77,47 +79,63 @@ namespace Battleship.Ascii
                 Console.WriteLine();
                 Console.WriteLine("Player, it's your turn");
                 Console.WriteLine("Enter coordinates for your shot, m to show Grid, or exit to quit :");
-                var position = ParsePosition(Console.ReadLine());                 
-                var isHit = GameController.CheckIsHit(enemyFleet, position);
 
-                telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
-                if (isHit)
+                string input = Console.ReadLine().Trim();
+
+                if (input.Contains("exit"))
                 {
-                    Console.Beep();
-
-                    Console.WriteLine(@"                \         .  ./");
-                    Console.WriteLine(@"              \      .:"";'.:..""   /");
-                    Console.WriteLine(@"                  (M^^.^~~:.'"").");
-                    Console.WriteLine(@"            -   (/  .    . . \ \)  -");
-                    Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
-                    Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
-                    Console.WriteLine(@"                 -\  \     /  /-");
-                    Console.WriteLine(@"                   \  \   /  /");
+                    Console.WriteLine("Thanks For Playing!!");
+                    quit=true;
                 }
-
-                Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
-
-                position = GetRandomPosition();
-                isHit = GameController.CheckIsHit(myFleet, position);
-                telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
-                Console.WriteLine();
-                Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
-                if (isHit)
+                else if (input.Contains("m"))
                 {
-                    Console.Beep();
+                    Console.WriteLine("Here is the grid");
+                }
+                else
+                {
+                    
+                    var position = ParsePosition(input);                 
+                    var isHit = GameController.CheckIsHit(enemyFleet, position);
 
-                    Console.WriteLine(@"                \         .  ./");
-                    Console.WriteLine(@"              \      .:"";'.:..""   /");
-                    Console.WriteLine(@"                  (M^^.^~~:.'"").");
-                    Console.WriteLine(@"            -   (/  .    . . \ \)  -");
-                    Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
-                    Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
-                    Console.WriteLine(@"                 -\  \     /  /-");
-                    Console.WriteLine(@"                   \  \   /  /");
+                    telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
+                    if (isHit)
+                    {
+                        Console.Beep();
 
+                        Console.WriteLine(@"                \         .  ./");
+                        Console.WriteLine(@"              \      .:"";'.:..""   /");
+                        Console.WriteLine(@"                  (M^^.^~~:.'"").");
+                        Console.WriteLine(@"            -   (/  .    . . \ \)  -");
+                        Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
+                        Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
+                        Console.WriteLine(@"                 -\  \     /  /-");
+                        Console.WriteLine(@"                   \  \   /  /");
+                    }
+
+                    Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
+
+                    position = GetRandomPosition();
+                    isHit = GameController.CheckIsHit(myFleet, position);
+                    telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
+                    Console.WriteLine();
+                    Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
+                    if (isHit)
+                    {
+                        Console.Beep();
+
+                        Console.WriteLine(@"                \         .  ./");
+                        Console.WriteLine(@"              \      .:"";'.:..""   /");
+                        Console.WriteLine(@"                  (M^^.^~~:.'"").");
+                        Console.WriteLine(@"            -   (/  .    . . \ \)  -");
+                        Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
+                        Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
+                        Console.WriteLine(@"                 -\  \     /  /-");
+                        Console.WriteLine(@"                   \  \   /  /");
+
+                    }
                 }
             }
-            while (true);
+            while (quit == false);
         }
 
         private char NumberToLetter(int number)
