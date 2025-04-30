@@ -124,22 +124,28 @@ namespace Battleship.Ascii
                     }
                     else
                     {
-                        position = ParsePosition(input); 
+
+                        var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
+                        var number = int.Parse(input.Substring(1, 1)) - 1;
+
+                        var sanitizedInput = $"{letter}{number}";
+                        position = ParsePosition(sanitizedInput); 
                         for (int i = 0; i < gameBoard.GetLength(0); i++)
                         {
                             char tempLetter = NumberToLetter(i);
-                            for (int j = 1; j < gameBoard.GetLength(1); j++)
+                            for (int j = 0; j < gameBoard.GetLength(1); j++)
                             {
-                                 if (gameBoard[i, j-1] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
+                                 if (gameBoard[i, j] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
                                 {
                                     isGoodPosition = true;
-                                    // 1 is something 2 is somethinggit push --set-upstream origin sam-sprint2
-                                    gameBoard[i, j-1] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
+                                    // 1 is hit 
+                                    // 2 is miss
+                                    gameBoard[i, j] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
                                 }
                             }
                         }
                         if(!isGoodPosition){
-                        Console.WriteLine("BAD POSITION, have already guessed, try again");
+                        Console.WriteLine("BAD POSITION, have already guessed, try again or invalid");
                         }
                     }
                     
