@@ -138,13 +138,12 @@ namespace Battleship.Ascii
                                 }
                             }
                         }
+                        if(!isGoodPosition){
                         Console.WriteLine("BAD POSITION, have already guessed, try again");
-                    }
-                    if(!isGoodPosition){
-                    Console.WriteLine("BAD POSITION, have already guessed, try again");
+                        }
                     }
                     
-                }while(!isGoodPosition);
+                }while(!isGoodPosition && !quit);
                 isGoodPosition = false;
                 
                 if (!quit)
