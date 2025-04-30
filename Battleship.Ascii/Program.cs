@@ -75,7 +75,16 @@ namespace Battleship.Ascii
                 Console.Write($" {rowLetter} ");
                 for (int col = 0; col < cols; col++)
                 {
-                    Console.Write($" {grid[row, col]}");
+                    if (grid[row,col]== 0)
+                    {
+                        Console.Write($" ");
+                    } else if (grid[row,col]==1) 
+                    {   
+                        Console.Write($" X");
+                    } else 
+                    {
+                       Console.Write($" 0"); 
+                    }
                 }
                 Console.WriteLine();
             }
@@ -140,12 +149,12 @@ namespace Battleship.Ascii
                             }
                         }
                         if(!isGoodPosition){
-                        Console.WriteLine("BAD POSITION, have already guessed, try again");
+                          Console.WriteLine("BAD POSITION, have already guessed, try again");
                         }
                     }
                     
                 }while(!isGoodPosition && !quit);
-                isGoodPosition = false;
+                
                 
                 if (!quit)
                 {
@@ -227,6 +236,8 @@ namespace Battleship.Ascii
                         Console.WriteLine();
                         Console.WriteLine("Miss");
                         Console.ResetColor();
+
+
                     }
                 }
                 if(GameController.AllShipsSunk(enemyFleet)){
