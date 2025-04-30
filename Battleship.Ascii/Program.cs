@@ -15,12 +15,11 @@ namespace Battleship.Ascii
         private static List<Ship> enemyFleet;
 
         private static ITelemetryClient telemetryClient;
-
         static void Main()
         {
             telemetryClient = new ApplicationInsightsTelemetryClient();
             telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET"} });
-
+            
             try
             {
                 Console.Title = "Battleship";
@@ -59,6 +58,8 @@ namespace Battleship.Ascii
 
         private static void StartGame()
         {
+            //ARRAY MAKE
+            int[,] board = new int[8, 8];
             Console.Clear();
             Console.WriteLine("                  __");
             Console.WriteLine(@"                 /  \");
@@ -75,7 +76,7 @@ namespace Battleship.Ascii
             {
                 Console.WriteLine();
                 Console.WriteLine("Player, it's your turn");
-                Console.WriteLine("Enter coordinates for your shot, m to show Grid, or exit to quit :");
+                Console.WriteLine("Enter coordinates for your shot :");
                 var position = ParsePosition(Console.ReadLine());                
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
@@ -116,6 +117,11 @@ namespace Battleship.Ascii
                 }
             }
             while (true);
+        }
+
+        private char NumberToLetter(int number)
+        {
+            return (char)('A' + number);
         }
 
         public static Position ParsePosition(string input)
