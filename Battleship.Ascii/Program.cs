@@ -58,7 +58,29 @@ namespace Battleship.Ascii
             }
 
         }
+        private static void PrintBattleshipGrid(int[,] grid)
+        {
+            int rows = grid.GetLength(0);
+            int cols = grid.GetLength(1);
 
+            Console.Write("  ");
+            for (int c = 0; c < cols; c++)
+            {
+                char colLetter = (char)('A' + c);
+                Console.Write($" {colLetter}");
+            }
+            Console.WriteLine();
+
+            for (int r = 0; r < rows; r++)
+            {
+                Console.Write($"{r + 1,2}");
+                for (int c = 0; c < cols; c++)
+                {
+                    Console.Write($" {grid[r, c]}");
+                }
+                Console.WriteLine();
+            }
+        }
         private static void StartGame()
         {
             gameBoard = new int[8, 8];
@@ -75,13 +97,12 @@ namespace Battleship.Ascii
             Console.WriteLine(@"   \    \_/");
             Console.WriteLine(@"    """"""""");
             Console.ResetColor();
-
+            bool isGoodPosition = false;
+            var position = ParsePosition("a0");
             do
             {
-                               
+                PrintBattleshipGrid(gameBoard);               
                 //SAM
-                bool isGoodPosition = false;
-                var position = ParsePosition("a0");
                 do{
                     Console.WriteLine();
                     Console.WriteLine("Player, it's your turn");
@@ -96,14 +117,15 @@ namespace Battleship.Ascii
                             if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
                             {
                                 isGoodPosition = true;
-                                gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
-                                break;
+                                gameBoard[i, j] = (GameController.CheckIsHit(enemyFleet, position)?1:2);
                             }
                         }
                     }
-                    Console.WriteLine("BAD POSITION, have already guessed, try again");
+                    if(!isGoodPosition){
+                    Console.WriteLine("BAD POSITION, have already guessed, try again");}
                     
                 }while(!isGoodPosition);
+                isGoodPosition = false;
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
@@ -176,10 +198,10 @@ namespace Battleship.Ascii
                     Console.WriteLine("Miss");
                     Console.ResetColor();
                 }
-            }
-            while (true);
+            }while (true);
         }
 
+        
         private static char NumberToLetter(int number)
         {
             return (char)('A' + number);
