@@ -214,7 +214,7 @@ namespace Battleship.Ascii
                     Console.WriteLine("Miss");
                     Console.ResetColor();
                 }
-            }while (true);
+            }while (quit == false);
         }
 
         
