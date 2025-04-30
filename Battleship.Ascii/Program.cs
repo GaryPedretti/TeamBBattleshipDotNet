@@ -131,13 +131,13 @@ namespace Battleship.Ascii
                         for (int i = 0; i < gameBoard.GetLength(0); i++)
                         {
                             char tempLetter = NumberToLetter(i);
-                            for (int j = 0; j < gameBoard.GetLength(1); j++)
+                            for (int j = 1; j < gameBoard.GetLength(1); j++)
                             {
-                                if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
+                                 if (gameBoard[i, j-1] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
                                 {
                                     isGoodPosition = true;
-                                    gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
-                                    break;
+                                    // 1 is something 2 is somethinggit push --set-upstream origin sam-sprint2
+                                    gameBoard[i, j-1] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
                                 }
                             }
                         }
@@ -189,7 +189,7 @@ namespace Battleship.Ascii
                     telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine();
-                    Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
+                    Console.WriteLine("Computer shot in {0}{1}", position.Column, position.Row);
                     Console.ResetColor();
                     if (isHit)
                     {
