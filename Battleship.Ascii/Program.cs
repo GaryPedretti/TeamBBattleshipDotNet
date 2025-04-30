@@ -80,10 +80,10 @@ namespace Battleship.Ascii
                         Console.Write($" ");
                     } else if (grid[row,col]==1) 
                     {   
-                        Console.Write($"O");
+                        Console.Write($"X");
                     } else 
                     {
-                       Console.Write($"X"); 
+                       Console.Write($"0"); 
                     }
                 }
                 Console.WriteLine();
