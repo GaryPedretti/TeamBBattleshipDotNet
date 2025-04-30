@@ -3,6 +3,7 @@ namespace Battleship.Ascii
 {
     using System;
     using System.Collections.Generic;
+    using System.Formats.Asn1;
     using System.Linq;
     using Battleship.Ascii.TelemetryClient;
     using Battleship.GameController;
@@ -93,6 +94,7 @@ namespace Battleship.Ascii
                             if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
                             {
                                 isGoodPosition = true;
+                                gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
                                 break;
                             }
                         }
