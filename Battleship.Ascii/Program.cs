@@ -22,8 +22,8 @@ namespace Battleship.Ascii
         static void Main()
         {
             telemetryClient = new ApplicationInsightsTelemetryClient();
-            telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET"} });
-            
+            telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET" } });
+
             try
             {
                 Console.Title = "Battleship";
@@ -57,23 +57,25 @@ namespace Battleship.Ascii
         }
         private static void PrintBattleshipGrid(int[,] grid)
         {
-            int rows = grid.GetLength(0);
-            int cols = grid.GetLength(1);
+            int rows = grid.GetLength(0); // Rows will now be letters (A-H)
+            int cols = grid.GetLength(1); // Columns will be numbers (1-8)
 
-            Console.Write("  ");
-            for (int c = 0; c < cols; c++)
+            // Print column headers (numbers)
+            Console.Write("   ");
+            for (int col = 0; col < cols; col++)
             {
-                char colLetter = (char)('A' + c);
-                Console.Write($" {colLetter}");
+                Console.Write($" {col + 1}");
             }
             Console.WriteLine();
 
-            for (int r = 0; r < rows; r++)
+            // Print each row with letter label
+            for (int row = 0; row < rows; row++)
             {
-                Console.Write($"{r + 1,2}");
-                for (int c = 0; c < cols; c++)
+                char rowLetter = (char)('A' + row);
+                Console.Write($" {rowLetter} ");
+                for (int col = 0; col < cols; col++)
                 {
-                    Console.Write($" {grid[r, c]}");
+                    Console.Write($" {grid[row, col]}");
                 }
                 Console.WriteLine();
             }
@@ -100,9 +102,10 @@ namespace Battleship.Ascii
             var position = ParsePosition("a0");
             do
             {
-                PrintBattleshipGrid(gameBoard);               
+                PrintBattleshipGrid(gameBoard);
                 //SAM
-                do{
+                do
+                {
                     Console.WriteLine();
                     Console.WriteLine("Player, it's your turn");
                     Console.WriteLine("Enter coordinates for your shot, m to show the grid, or exit to quit:");
@@ -116,7 +119,7 @@ namespace Battleship.Ascii
                     }
                     else if (input.Contains("m"))
                     {
-                        Console.WriteLine("Here is the grid");
+                        PrintBattleshipGrid(gameBoard);  
                     }
                     else
                     {
@@ -124,20 +127,24 @@ namespace Battleship.Ascii
                         for (int i = 0; i < gameBoard.GetLength(0); i++)
                         {
                             char tempLetter = NumberToLetter(i);
-                            for (int j = 0; j < gameBoard.GetLength(1); j++)
+                            for (int j = 1; j < gameBoard.GetLength(1); j++)
                             {
-                                if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
+                                 if (gameBoard[i, j-1] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
                                 {
                                     isGoodPosition = true;
-                                    gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
-                                    break;
+                                    // 1 is something 2 is somethinggit push --set-upstream origin sam-sprint2
+                                    gameBoard[i, j-1] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
                                 }
                             }
                         }
+                        if(!isGoodPosition){
                         Console.WriteLine("BAD POSITION, have already guessed, try again");
+                        }
                     }
+                    
                 }while(!isGoodPosition && !quit);
                 isGoodPosition = false;
+                
                 if (!quit)
                 {
                     var isHit = GameController.CheckIsHit(enemyFleet, position);
@@ -177,13 +184,12 @@ namespace Battleship.Ascii
                         Console.WriteLine("Miss");
                         Console.ResetColor();
                     }
-
                     position = GetRandomPosition();
                     isHit = GameController.CheckIsHit(myFleet, position);
                     telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine();
-                    Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
+                    Console.WriteLine("Computer shot in {0}{1}", position.Column, position.Row);
                     Console.ResetColor();
                     if (isHit)
                     {
@@ -221,6 +227,13 @@ namespace Battleship.Ascii
                         Console.ResetColor();
                     }
                 }
+                if(GameController.AllShipsSunk(enemyFleet)){
+                    Console.WriteLine("Amazing! You sunk all Enemy ships");
+                }
+                if(GameController.AllShipsSunk(myFleet)){
+                    Console.WriteLine("Loser! All your ships are sunk");
+                }
+
             }while (quit == false);
         }
 
@@ -241,8 +254,7 @@ namespace Battleship.Ascii
             Console.ReadKey();
             Environment.Exit(0);
         }
-
-        
+      
         private static char NumberToLetter(int number)
         {
             return (char)('A' + number);
@@ -253,6 +265,11 @@ namespace Battleship.Ascii
             var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
             var number = int.Parse(input.Substring(1, 1));
             return new Position(letter, number);
+        }
+
+        private static bool ArePositionsEqual(Position a, Position b)
+        {
+            return a.Column == b.Column && a.Row == b.Row;
         }
 
         private static Position GetRandomPosition()
