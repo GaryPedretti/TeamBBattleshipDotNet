@@ -47,6 +47,7 @@ namespace Battleship.GameController
                 {
                     if (position.Equals(shot))
                     {
+                        position.Hit();
                         return true;
                     }
                 }
@@ -55,6 +56,57 @@ namespace Battleship.GameController
             return false;
         }
 
+        /// <summary>
+        /// Checks the ship sunk condition.
+        /// </summary>
+        /// <param name="ship">
+        /// The ship.
+        /// </param>
+        /// <returns>
+        /// True if sunk, else false
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// ships
+        ///     or
+        ///     shot
+        /// </exception>
+        public static void CheckIsSunk(Ship ship)
+        {
+            if (ship == null)
+            {
+                throw new ArgumentNullException("ship");
+            }
+
+            foreach (var position in ship.Positions)
+            {
+                if (!position.IsHit())
+                {
+                    return;
+                }
+            }
+            ship.IsSunk = true;
+        }
+
+        public static bool CheckFleet(IEnumerable<Ship> ships)
+        {
+            if (ships == null)
+            {
+                throw new ArgumentNullException("ships");
+            }
+
+
+            foreach (var ship in ships)
+            {
+
+                    if (!ship.IsSunk)
+                    {
+                        return false;
+                    }
+                
+            }
+
+            return true;
+        }
         /// <summary>
         ///     The initialize ships.
         /// </summary>
