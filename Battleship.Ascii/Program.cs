@@ -287,7 +287,8 @@ namespace Battleship.Ascii
 
         private static void InitializeGame()
         {
-            InitializeMyFleet();
+            //InitializeMyFleet();
+            InitializePlayerTestFleet();
 
             InitializeEnemyFleet();
         }
@@ -340,6 +341,33 @@ namespace Battleship.Ascii
 
             enemyFleet[4].Positions.Add(new Position { Column = Letters.C, Row = 5 });
             enemyFleet[4].Positions.Add(new Position { Column = Letters.C, Row = 6 });
+        }
+
+        private static void InitializePlayerTestFleet()
+        {
+            myFleet = GameController.InitializeShips().ToList();
+
+            myFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 4 });
+            myFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 5 });
+            myFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 6 });
+            myFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 7 });
+            myFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 8 });
+
+            myFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 5 });
+            myFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 6 });
+            myFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 7 });
+            myFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 8 });
+
+            myFleet[2].Positions.Add(new Position { Column = Letters.A, Row = 3 });
+            myFleet[2].Positions.Add(new Position { Column = Letters.B, Row = 3 });
+            myFleet[2].Positions.Add(new Position { Column = Letters.C, Row = 3 });
+
+            myFleet[3].Positions.Add(new Position { Column = Letters.F, Row = 8 });
+            myFleet[3].Positions.Add(new Position { Column = Letters.G, Row = 8 });
+            myFleet[3].Positions.Add(new Position { Column = Letters.H, Row = 8 });
+
+            myFleet[4].Positions.Add(new Position { Column = Letters.C, Row = 5 });
+            myFleet[4].Positions.Add(new Position { Column = Letters.C, Row = 6 });
         }
     }
 }
