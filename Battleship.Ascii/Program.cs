@@ -64,6 +64,7 @@ namespace Battleship.Ascii
         {
             gameBoard = new int[8, 8];
             bool quit = false;
+
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("                  __");
@@ -87,25 +88,38 @@ namespace Battleship.Ascii
                 do{
                     Console.WriteLine();
                     Console.WriteLine("Player, it's your turn");
-                    Console.WriteLine("Enter coordinates for your shot :");
+                    Console.WriteLine("Enter coordinates for your shot, m to show the grid, or exit to quit:");
 
-                    position = ParsePosition(Console.ReadLine()); 
-                    for (int i = 0; i < gameBoard.GetLength(0); i++)
+                    string input = Console.ReadLine().Trim();
+
+                    if (input.Contains("exit"))
                     {
-                        char tempLetter = NumberToLetter(i);
-                        for (int j = 0; j < gameBoard.GetLength(1); j++)
+                        Console.WriteLine("Thanks for Playing!");
+                        quit = true;
+                    }
+                    else if (input.Contains("m"))
+                    {
+                        Console.WriteLine("Here is the grid");
+                    }
+                    else
+                    {
+                        position = ParsePosition(input); 
+                        for (int i = 0; i < gameBoard.GetLength(0); i++)
                         {
-                            if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
+                            char tempLetter = NumberToLetter(i);
+                            for (int j = 0; j < gameBoard.GetLength(1); j++)
                             {
-                                isGoodPosition = true;
-                                gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
-                                break;
+                                if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
+                                {
+                                    isGoodPosition = true;
+                                    gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
+                                    break;
+                                }
                             }
                         }
+                        Console.WriteLine("BAD POSITION, have already guessed, try again");
                     }
-                    Console.WriteLine("BAD POSITION, have already guessed, try again");
-                    
-                }while(!isGoodPosition);
+                }while(!isGoodPosition );
                 var isHit = GameController.CheckIsHit(enemyFleet, position);
                 telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                 if (isHit)
@@ -150,7 +164,6 @@ namespace Battleship.Ascii
                     Console.WriteLine(@"                   \  \   /  /");
                     Console.ResetColor();
 
-                    }
                 }
             }
             while (quit == false);
