@@ -12,6 +12,7 @@ namespace Battleship.GameController.Contracts
     public class Ship
     {
         private bool isPlaced;
+        private bool isSunk;
 
         #region Constructors and Destructors
 
@@ -76,6 +77,16 @@ namespace Battleship.GameController.Contracts
             {
                 if (value.Equals(isPlaced)) return;
                 isPlaced = value;
+            }
+        }
+
+        public bool IsSunk
+        {
+            get { return isSunk; }
+            set
+            {
+                if (value.Equals(isSunk)) return;
+                isSunk = value;
             }
         }
         #endregion

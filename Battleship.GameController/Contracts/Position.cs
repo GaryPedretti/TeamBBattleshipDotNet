@@ -5,6 +5,7 @@
     /// </summary>
     public class Position
     {
+        private bool isHit = false;
         #region Constructors and Destructors
 
         /// <summary>
@@ -65,6 +66,11 @@
             }
 
             return position.Column == Column && position.Row == Row;
+        }
+        public void Hit() => isHit = true;
+
+        public bool IsHit(){
+            return isHit;
         }
 
         public override string ToString()
