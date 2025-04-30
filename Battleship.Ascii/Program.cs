@@ -3,10 +3,12 @@ namespace Battleship.Ascii
 {
     using System;
     using System.Collections.Generic;
+    using System.Formats.Asn1;
     using System.Linq;
     using Battleship.Ascii.TelemetryClient;
     using Battleship.GameController;
     using Battleship.GameController.Contracts;
+    using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
 
     public class Program
     {
@@ -14,19 +16,20 @@ namespace Battleship.Ascii
 
         private static List<Ship> enemyFleet;
 
-        private static ITelemetryClient telemetryClient;
+        private static int[,] gameBoard;
 
+        private static ITelemetryClient telemetryClient;
         static void Main()
         {
             telemetryClient = new ApplicationInsightsTelemetryClient();
-            telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET"} });
+            telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET" } });
 
             try
             {
                 Console.Title = "Battleship";
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.Clear();
-
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("                                     |__");
                 Console.WriteLine(@"                                     |\/");
                 Console.WriteLine("                                     ---");
@@ -51,15 +54,43 @@ namespace Battleship.Ascii
                 Console.WriteLine("A serious problem occured. The application cannot continue and will be closed.");
                 telemetryClient.TrackException(e);
                 Console.WriteLine("");
-                Console.WriteLine("Error details:");      
+                Console.WriteLine("Error details:");
                 throw new Exception("Fatal error", e);
             }
 
         }
+        private static void PrintBattleshipGrid(int[,] grid)
+        {
+            int rows = grid.GetLength(0); // Rows will now be letters (A-H)
+            int cols = grid.GetLength(1); // Columns will be numbers (1-8)
 
+            // Print column headers (numbers)
+            Console.Write("   ");
+            for (int col = 0; col < cols; col++)
+            {
+                Console.Write($" {col + 1}");
+            }
+            Console.WriteLine();
+
+            // Print each row with letter label
+            for (int row = 0; row < rows; row++)
+            {
+                char rowLetter = (char)('A' + row);
+                Console.Write($" {rowLetter} ");
+                for (int col = 0; col < cols; col++)
+                {
+                    Console.Write($" {grid[row, col]}");
+                }
+                Console.WriteLine();
+            }
+        }
         private static void StartGame()
         {
+            gameBoard = new int[8, 8];
+            bool quit = false;
+
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("                  __");
             Console.WriteLine(@"                 /  \");
             Console.WriteLine("           .-.  |    |");
@@ -70,61 +101,142 @@ namespace Battleship.Ascii
             Console.WriteLine(@"  |     /_\'");
             Console.WriteLine(@"   \    \_/");
             Console.WriteLine(@"    """"""""");
-
+            Console.ResetColor();
+            bool isGoodPosition = false;
+            var position = ParsePosition("a0");
             do
             {
-                Console.WriteLine();
-                Console.WriteLine("Player, it's your turn");
-                Console.WriteLine("Enter coordinates for your shot :");
-                var position = ParsePosition(Console.ReadLine());                
-                var isHit = GameController.CheckIsHit(enemyFleet, position);
-                telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
-                if (isHit)
+                PrintBattleshipGrid(gameBoard);
+                //SAM
+                do
                 {
-                    Console.Beep();
+                    Console.WriteLine();
+                    Console.WriteLine("Player, it's your turn");
+                    Console.WriteLine("Enter coordinates for your shot, m to show the grid, or exit to quit:");
 
-                    Console.WriteLine(@"                \         .  ./");
-                    Console.WriteLine(@"              \      .:"";'.:..""   /");
-                    Console.WriteLine(@"                  (M^^.^~~:.'"").");
-                    Console.WriteLine(@"            -   (/  .    . . \ \)  -");
-                    Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
-                    Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
-                    Console.WriteLine(@"                 -\  \     /  /-");
-                    Console.WriteLine(@"                   \  \   /  /");
+                    string input = Console.ReadLine().Trim();
+
+                    if (input.Contains("exit"))
+                    {
+                        Console.WriteLine("Thanks for Playing!");
+                        quit = true;
+                    }
+                    else if (input.Contains("m"))
+                    {
+                        PrintBattleshipGrid(gameBoard);  
+                    }
+                    else
+                    {
+                        position = ParsePosition(input); 
+                        for (int i = 0; i < gameBoard.GetLength(0); i++)
+                        {
+                            char tempLetter = NumberToLetter(i);
+                            for (int j = 0; j < gameBoard.GetLength(1); j++)
+                            {
+                                if(gameBoard[i, j] == 0 && ParsePosition($"{tempLetter}{j}") == position)
+                                {
+                                    isGoodPosition = true;
+                                    gameBoard[i, j] = GameController.CheckIsHit(enemyFleet, position)?1:2;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!isGoodPosition){
+                        Console.WriteLine("BAD POSITION, have already guessed, try again");
+                        }
+                    }
+                    
+                }while(!isGoodPosition && !quit);
+                isGoodPosition = false;
+                
+                if (!quit)
+                {
+                    var isHit = GameController.CheckIsHit(enemyFleet, position);
+                    telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
+                    if (isHit)
+                    {
+                        Console.Beep();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(@"                \         .  ./");
+                        Console.WriteLine(@"              \      .:"";'.:..""   /");
+                        Console.WriteLine(@"                  (M^^.^~~:.'"").");
+                        Console.WriteLine(@"            -   (/  .    . . \ \)  -");
+                        Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
+                        Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
+                        Console.WriteLine(@"                 -\  \     /  /-");
+                        Console.WriteLine(@"                   \  \   /  /");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("Yeah! Nice Hit !");
+
+                    } else {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("    *     .     *   ");
+                        Console.WriteLine("        *   .       ");
+                        Console.WriteLine("   SPLASH! You missed!");
+                        Console.WriteLine("        ~~~~~~       ");
+                        Console.WriteLine("     ~~~~  ~~~~      ");
+                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("Miss");
+                        Console.ResetColor();
+                    }
+                    position = GetRandomPosition();
+                    isHit = GameController.CheckIsHit(myFleet, position);
+                    telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine();
+                    Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row);
+                    Console.ResetColor();
+                    if (isHit)
+                    {
+                        Console.Beep();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(@"                \         .  ./");
+                        Console.WriteLine(@"              \      .:"";'.:..""   /");
+                        Console.WriteLine(@"                  (M^^.^~~:.'"").");
+                        Console.WriteLine(@"            -   (/  .    . . \ \)  -");
+                        Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
+                        Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
+                        Console.WriteLine(@"                 -\  \     /  /-");
+                        Console.WriteLine(@"                   \  \   /  /");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("They've hit your ship !");
+
+                    } else {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("    *     .     *   ");
+                        Console.WriteLine("        *   .       ");
+                        Console.WriteLine("   SPLASH! They missed!");
+                        Console.WriteLine("        ~~~~~~       ");
+                        Console.WriteLine("     ~~~~  ~~~~      ");
+                        Console.WriteLine("  ~~~~      ~~~~     ");
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine();
+                        Console.WriteLine("Miss");
+                        Console.ResetColor();
+                    }
                 }
-
-                Console.WriteLine(isHit ? "Yeah ! Nice hit !" : "Miss");
                 if(GameController.AllShipsSunk(enemyFleet)){
                     Console.WriteLine("Amazing! You sunk all Enemy ships");
-                }
-
-                position = GetRandomPosition();
-                isHit = GameController.CheckIsHit(myFleet, position);
-                
-                telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
-                Console.WriteLine();
-                Console.WriteLine("Computer shot in {0}{1} and {2}", position.Column, position.Row, isHit ? "has hit your ship !" : "missed");
-                if (isHit)
-                {
-                    Console.Beep();
-
-                    Console.WriteLine(@"                \         .  ./");
-                    Console.WriteLine(@"              \      .:"";'.:..""   /");
-                    Console.WriteLine(@"                  (M^^.^~~:.'"").");
-                    Console.WriteLine(@"            -   (/  .    . . \ \)  -");
-                    Console.WriteLine(@"               ((| :. ~ ^  :. .|))");
-                    Console.WriteLine(@"            -   (\- |  \ /  |  /)  -");
-                    Console.WriteLine(@"                 -\  \     /  /-");
-                    Console.WriteLine(@"                   \  \   /  /");
-
                 }
                 if(GameController.AllShipsSunk(myFleet)){
                     Console.WriteLine("Loser! All your ships are sunk");
                 }
 
-            }
-            
-            while (true);
+            }while (quit == false);
+        }
+
+
+        private static char NumberToLetter(int number)
+        {
+            return (char)('A' + number);
         }
 
         public static Position ParsePosition(string input)
@@ -132,6 +244,11 @@ namespace Battleship.Ascii
             var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
             var number = int.Parse(input.Substring(1, 1));
             return new Position(letter, number);
+        }
+
+        private static bool ArePositionsEqual(Position a, Position b)
+        {
+            return a.Column == b.Column && a.Row == b.Row;
         }
 
         private static Position GetRandomPosition()
@@ -156,11 +273,14 @@ namespace Battleship.Ascii
         {
             myFleet = GameController.InitializeShips().ToList();
 
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
 
             foreach (var ship in myFleet)
             {
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
                 for (var i = 1; i <= ship.Size; i++)
                 {
