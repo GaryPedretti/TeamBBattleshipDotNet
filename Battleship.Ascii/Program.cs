@@ -140,7 +140,11 @@ namespace Battleship.Ascii
                         }
                         Console.WriteLine("BAD POSITION, have already guessed, try again");
                     }
-                }while(!isGoodPosition && !quit);
+                    if(!isGoodPosition){
+                    Console.WriteLine("BAD POSITION, have already guessed, try again");
+                    }
+                    
+                }while(!isGoodPosition);
                 isGoodPosition = false;
                 
                 if (!quit)
@@ -232,6 +236,11 @@ namespace Battleship.Ascii
             var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
             var number = int.Parse(input.Substring(1, 1));
             return new Position(letter, number);
+        }
+
+        private static bool ArePositionsEqual(Position a, Position b)
+        {
+            return a.Column == b.Column && a.Row == b.Row;
         }
 
         private static Position GetRandomPosition()
