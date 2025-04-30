@@ -223,6 +223,13 @@ namespace Battleship.Ascii
                         Console.ResetColor();
                     }
                 }
+                if(GameController.AllShipsSunk(enemyFleet)){
+                    Console.WriteLine("Amazing! You sunk all Enemy ships");
+                }
+                if(GameController.AllShipsSunk(myFleet)){
+                    Console.WriteLine("Loser! All your ships are sunk");
+                }
+
             }while (quit == false);
         }
 
