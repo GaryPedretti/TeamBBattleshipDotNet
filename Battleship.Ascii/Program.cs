@@ -122,7 +122,8 @@ namespace Battleship.Ascii
                         }
                     }
                     if(!isGoodPosition){
-                    Console.WriteLine("BAD POSITION, have already guessed, try again");}
+                    Console.WriteLine("BAD POSITION, have already guessed, try again");
+                    }
                     
                 }while(!isGoodPosition);
                 isGoodPosition = false;
