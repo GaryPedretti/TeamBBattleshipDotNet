@@ -22,8 +22,8 @@ namespace Battleship.Ascii
         static void Main()
         {
             telemetryClient = new ApplicationInsightsTelemetryClient();
-            telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET"} });
-            
+            telemetryClient.TrackEvent("ApplicationStarted", new Dictionary<string, string> { { "Technology", ".NET" } });
+
             try
             {
                 Console.Title = "Battleship";
@@ -54,30 +54,32 @@ namespace Battleship.Ascii
                 Console.WriteLine("A serious problem occured. The application cannot continue and will be closed.");
                 telemetryClient.TrackException(e);
                 Console.WriteLine("");
-                Console.WriteLine("Error details:");      
+                Console.WriteLine("Error details:");
                 throw new Exception("Fatal error", e);
             }
 
         }
         private static void PrintBattleshipGrid(int[,] grid)
         {
-            int rows = grid.GetLength(0);
-            int cols = grid.GetLength(1);
+            int rows = grid.GetLength(0); // Rows will now be letters (A-H)
+            int cols = grid.GetLength(1); // Columns will be numbers (1-8)
 
-            Console.Write("  ");
-            for (int c = 0; c < cols; c++)
+            // Print column headers (numbers)
+            Console.Write("   ");
+            for (int col = 0; col < cols; col++)
             {
-                char colLetter = (char)('A' + c);
-                Console.Write($" {colLetter}");
+                Console.Write($" {col + 1}");
             }
             Console.WriteLine();
 
-            for (int r = 0; r < rows; r++)
+            // Print each row with letter label
+            for (int row = 0; row < rows; row++)
             {
-                Console.Write($"{r + 1,2}");
-                for (int c = 0; c < cols; c++)
+                char rowLetter = (char)('A' + row);
+                Console.Write($" {rowLetter} ");
+                for (int col = 0; col < cols; col++)
                 {
-                    Console.Write($" {grid[r, c]}");
+                    Console.Write($" {grid[row, col]}");
                 }
                 Console.WriteLine();
             }
@@ -104,9 +106,10 @@ namespace Battleship.Ascii
             var position = ParsePosition("a0");
             do
             {
-                PrintBattleshipGrid(gameBoard);               
+                PrintBattleshipGrid(gameBoard);
                 //SAM
-                do{
+                do
+                {
                     Console.WriteLine();
                     Console.WriteLine("Player, it's your turn");
                     Console.WriteLine("Enter coordinates for your shot, m to show the grid, or exit to quit:");
@@ -181,7 +184,6 @@ namespace Battleship.Ascii
                         Console.WriteLine("Miss");
                         Console.ResetColor();
                     }
-
                     position = GetRandomPosition();
                     isHit = GameController.CheckIsHit(myFleet, position);
                     telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
@@ -221,10 +223,17 @@ namespace Battleship.Ascii
                         Console.ResetColor();
                     }
                 }
+                if(GameController.AllShipsSunk(enemyFleet)){
+                    Console.WriteLine("Amazing! You sunk all Enemy ships");
+                }
+                if(GameController.AllShipsSunk(myFleet)){
+                    Console.WriteLine("Loser! All your ships are sunk");
+                }
+
             }while (quit == false);
         }
 
-        
+
         private static char NumberToLetter(int number)
         {
             return (char)('A' + number);
