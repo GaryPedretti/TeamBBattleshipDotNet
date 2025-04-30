@@ -229,9 +229,11 @@ namespace Battleship.Ascii
                 }
                 if(GameController.AllShipsSunk(enemyFleet)){
                     Console.WriteLine("Amazing! You sunk all Enemy ships");
+                    GameOver();
                 }
                 if(GameController.AllShipsSunk(myFleet)){
                     Console.WriteLine("Loser! All your ships are sunk");
+                    GameOver();
                 }
 
             }while (quit == false);
