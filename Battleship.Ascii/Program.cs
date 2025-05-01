@@ -259,7 +259,7 @@ namespace Battleship.Ascii
             }while (quit == false);
         }
 
-        public static bool isShipInGrid(Position ){
+        public static bool isShipInGrid(Position checkPosition){
             return false;
         }
 
