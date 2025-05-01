@@ -412,7 +412,6 @@ namespace Battleship.Ascii
 
             Random rnd = new Random();
 
-            var counter = 0;
             int shipNumber = 0;
             foreach (var ship in ships)
             {
