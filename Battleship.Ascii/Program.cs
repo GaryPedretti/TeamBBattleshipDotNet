@@ -311,14 +311,17 @@ namespace Battleship.Ascii
 
         private static void InitializeGame()
         {
-            //InitializeMyFleet();
-            InitializePlayerTestFleet();
+            InitializeMyFleet();
+         //   InitializePlayerTestFleet();
 
             InitializeEnemyFleet();
         }
 
         private static void InitializeMyFleet()
         {
+            bool badPosition = false;
+            bool useLetter = false;
+            
             myFleet = GameController.InitializeShips().ToList();
 
             Console.BackgroundColor = ConsoleColor.Black;
@@ -330,12 +333,56 @@ namespace Battleship.Ascii
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
-                for (var i = 1; i <= ship.Size; i++)
+                for (var i = 1; i <= ship.Size;)
                 {
                     Console.WriteLine("Enter position {0} of {1} (i.e A3):", i, ship.Size);
                     var position = Console.ReadLine();
-                    ship.AddPosition(position);
-                    telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
+
+                    //this should be sanitized
+
+                    // if the position is not in the same direction as the last
+                    if ( i != 1)
+                    {
+
+                       var letter = (Letters)Enum.Parse(typeof(Letters), position.ToUpper().Substring(0, 1));
+                       var number = int.Parse(position.Substring(1, 1));
+                      if (i == 2)
+                      {
+                        if ((letter == ship.Positions[0].Column ) || (number == ship.Positions[0].Row))
+                        {
+                            if (letter == ship.Positions[0].Column)
+                                useLetter = true;
+                                else
+                                useLetter = false;
+ 
+                        } else 
+                        {
+                            badPosition = true;
+                        }
+                      } else 
+                      {
+                          if (useLetter)
+                          {
+                            if (letter != ship.Positions[0].Column)
+                                badPosition = true;
+                          } else
+                            if (number != ship.Positions[0].Row)
+                                badPosition = true;
+
+                      }
+
+                    }
+                    if (!badPosition)
+                    {
+                      ship.AddPosition(position);
+                      telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
+                       i++;
+                    } else
+                    { 
+                        Console.WriteLine("Invalid ship placement");
+                    }
+
+                    badPosition = false;
                 }
             }
         }
