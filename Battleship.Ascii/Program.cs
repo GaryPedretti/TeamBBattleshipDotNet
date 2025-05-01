@@ -363,7 +363,7 @@ namespace Battleship.Ascii
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
-
+            
             foreach (var ship in myFleet)
             {
                 Console.WriteLine();
@@ -373,52 +373,15 @@ namespace Battleship.Ascii
                 {
                     Console.WriteLine("Enter position {0} of {1} (i.e A3):", i, ship.Size);
                     var position = Console.ReadLine();
-
-                    //this should be sanitized
-
-                    // if the position is not in the same direction as the last
-                    if ( i != 1)
-                    {
-
-                       var letter = (Letters)Enum.Parse(typeof(Letters), position.ToUpper().Substring(0, 1));
-                       var number = int.Parse(position.Substring(1, 1));
-                      if (i == 2)
-                      {
-                        if ((letter == ship.Positions[0].Column ) || (number == ship.Positions[0].Row))
-                        {
-                            if (letter == ship.Positions[0].Column)
-                                useLetter = true;
-                                else
-                                useLetter = false;
- 
-                        } else 
-                        {
-                            badPosition = true;
-                        }
-                      } else 
-                      {
-                          if (useLetter)
-                          {
-                            if (letter != ship.Positions[0].Column)
-                                badPosition = true;
-                          } else
-                            if (number != ship.Positions[0].Row)
-                                badPosition = true;
-
-                      }
-
+                    if (ship.AddPosition(position)) {
+                        telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
+                        i++;
+                    } else {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine();
+                        Console.WriteLine("Invalid ship placement, ships must be placed in a straight line.");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                     }
-                    if (!badPosition)
-                    {
-                      ship.AddPosition(position);
-                      telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
-                       i++;
-                    } else
-                    { 
-                        Console.WriteLine("Invalid ship placement");
-                    }
-
-                    badPosition = false;
                 }
             }
         }

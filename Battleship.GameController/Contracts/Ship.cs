@@ -31,7 +31,7 @@ namespace Battleship.GameController.Contracts
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = String.Empty;
 
         /// <summary>
         /// Gets or sets the positions.
@@ -58,7 +58,7 @@ namespace Battleship.GameController.Contracts
         /// <param name="input">
         /// The input.
         /// </param>
-        public void AddPosition(string input)
+        public bool AddPosition(string input)
         {
             if (Positions == null)
             {
@@ -67,7 +67,47 @@ namespace Battleship.GameController.Contracts
 
             var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
             var number = int.Parse(input.Substring(1, 1));
-            Positions.Add(new Position { Column = letter, Row = number });
+            if (IsAdjacentAndLinear(letter, number))
+            {
+                Positions.Add(new Position { Column = letter, Row = number });
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsAdjacentAndLinear(Letters letter, int number)
+        {
+            if (Positions == null || Positions.Count == 0)
+                return true; // First position is always valid
+
+            var last = Positions.Last();
+
+            int letterDist = Math.Abs((int)letter - (int)last.Column);
+            int numberDist = Math.Abs(number - last.Row);
+
+            bool isAdjacent = (letterDist == 1 && numberDist == 0) || (letterDist == 0 && numberDist == 1);
+            if (!isAdjacent)
+                return false;
+
+            // If this is only the second position, accept any straight-line direction
+            if (Positions.Count == 1)
+                return true;
+
+            // Determine intended direction from first two positions
+            var first = Positions.First();
+            bool isVertical = first.Column == Positions[1].Column;
+            bool isHorizontal = first.Row == Positions[1].Row;
+
+            // Enforce consistent direction
+            if (isVertical && letter != first.Column)
+                return false;
+            if (isHorizontal && number != first.Row)
+                return false;
+
+            return true;
         }
 
         public bool IsPlaced
