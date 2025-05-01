@@ -136,13 +136,17 @@ namespace Battleship.Ascii
                     else
                     {
 
-                        var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
-                        var number = int.Parse(input.Substring(1, 1)) - 1;
+
                         bool isGoodPosition = isShipInGrid(input);
-                        var sanitizedInput = $"{letter}{number}";
-                        position = ParsePosition(sanitizedInput);
+
+
                         if (isGoodPosition)
                         {
+                            var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
+                            var number = int.Parse(input.Substring(1, 1)) - 1;
+                            var sanitizedInput = $"{letter}{number}";
+
+                            position = ParsePosition(sanitizedInput);
                             for (int i = 0; i < gameBoard.GetLength(0); i++)
                             {
                                 char tempLetter = NumberToLetter(i);
@@ -162,7 +166,7 @@ namespace Battleship.Ascii
                         {
                             Console.WriteLine("BAD POSITION, have already guessed, try again");
                         }
-                        if(!isGoodPosition)
+                        if (!isGoodPosition)
                         {
                             Console.WriteLine("Out of Bounds position, please shoot again A-H and 1-8 only. ie. h7");
                         }
@@ -276,17 +280,17 @@ namespace Battleship.Ascii
         }
         public static bool isShipInGrid(string newPosition)
         {
+            try{
             var letter = (Letters)Enum.Parse(typeof(Letters), newPosition.ToUpper().Substring(0, 1));
+            }catch{
+                return false;
+            }
             var number = int.Parse(newPosition.Substring(1, 1)) - 1;
             if (newPosition.Length > 2)
             {
                 return false;
             }
             if (number + 1 >= 9 || number + 1 < 1)
-            {
-                return false;
-            }
-            if (!(letter >= Letters.A && letter <= Letters.H))
             {
                 return false;
             }
