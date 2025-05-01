@@ -259,6 +259,10 @@ namespace Battleship.Ascii
             }while (quit == false);
         }
 
+        public static bool isShipInGrid(Position ){
+            return false;
+        }
+
         private static void CrashExit(Exception e) {
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Red;
@@ -340,27 +344,27 @@ namespace Battleship.Ascii
         {
             enemyFleet = GameController.InitializeShips().ToList();
 
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 4 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 5 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 6 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 7 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.B, Row = 8 });
+            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 1 });
+            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 2 });
+            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 3 });
+            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 4 });
+            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 5 });
 
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 6 });
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 7 });
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 8 });
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.E, Row = 9 });
+            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 3 });
+            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 4 });
+            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 5 });
+            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 6 });
 
             enemyFleet[2].Positions.Add(new Position { Column = Letters.A, Row = 3 });
-            enemyFleet[2].Positions.Add(new Position { Column = Letters.B, Row = 3 });
-            enemyFleet[2].Positions.Add(new Position { Column = Letters.C, Row = 3 });
+            enemyFleet[2].Positions.Add(new Position { Column = Letters.A, Row = 3 });
+            enemyFleet[2].Positions.Add(new Position { Column = Letters.A, Row = 3 });
 
-            enemyFleet[3].Positions.Add(new Position { Column = Letters.F, Row = 8 });
-            enemyFleet[3].Positions.Add(new Position { Column = Letters.G, Row = 8 });
-            enemyFleet[3].Positions.Add(new Position { Column = Letters.H, Row = 8 });
+            enemyFleet[3].Positions.Add(new Position { Column = Letters.A, Row = 8 });
+            enemyFleet[3].Positions.Add(new Position { Column = Letters.A, Row = 8 });
+            enemyFleet[3].Positions.Add(new Position { Column = Letters.A, Row = 8 });
 
-            enemyFleet[4].Positions.Add(new Position { Column = Letters.C, Row = 5 });
-            enemyFleet[4].Positions.Add(new Position { Column = Letters.C, Row = 6 });
+            enemyFleet[4].Positions.Add(new Position { Column = Letters.A, Row = 5 });
+            enemyFleet[4].Positions.Add(new Position { Column = Letters.A, Row = 6 });
         }
 
         private static void InitializePlayerTestFleet()
