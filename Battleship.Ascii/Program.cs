@@ -371,17 +371,21 @@ namespace Battleship.Ascii
         {
             // InitializeMyFleet();
             InitializePlayerTestFleet();
+            InitializeMyFleet();
+         //   InitializePlayerTestFleet();
 
             InitializeEnemyFleet();
         }
 
         private static void InitializeMyFleet()
         {
+            
             myFleet = GameController.InitializeShips().ToList();
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
+            
             
             foreach (var ship in myFleet)
             {
@@ -390,8 +394,17 @@ namespace Battleship.Ascii
                 Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
                 for (var i = 1; i <= ship.Size;)
                 {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("Enter position {0} of {1} (i.e A3):", i, ship.Size);
                     var position = Console.ReadLine();
+                    
+                    if (!isShipInGrid(position))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine();
+                        Console.WriteLine("Invalid ship placement, Position not on grid.");
+                        continue;
+                    }
                     if (ship.AddPosition(position)) {
                         telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
                         i++;
