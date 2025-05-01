@@ -109,7 +109,7 @@ namespace Battleship.Ascii
             Console.WriteLine(@"   \    \_/");
             Console.WriteLine(@"    """"""""");
             Console.ResetColor();
-            bool isGoodPosition = false;
+            bool isRepeatPosition = false;
             var position = ParsePosition("a0");
             do
             {
@@ -138,10 +138,10 @@ namespace Battleship.Ascii
 
                         var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
                         var number = int.Parse(input.Substring(1, 1)) - 1;
-                        bool goodPosition = isShipInGrid(input);
+                        bool isGoodPosition = isShipInGrid(input);
                         var sanitizedInput = $"{letter}{number}";
                         position = ParsePosition(sanitizedInput);
-                        if (goodPosition)
+                        if (isGoodPosition)
                         {
                             for (int i = 0; i < gameBoard.GetLength(0); i++)
                             {
@@ -150,7 +150,7 @@ namespace Battleship.Ascii
                                 {
                                     if (gameBoard[i, j] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
                                     {
-                                        isGoodPosition = true;
+                                        isRepeatPosition = true;
                                         // 1 is hit 
                                         // 2 is miss
                                         gameBoard[i, j] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
@@ -158,14 +158,18 @@ namespace Battleship.Ascii
                                 }
                             }
                         }
-                        if (!isGoodPosition)
+                        if (!isRepeatPosition)
                         {
                             Console.WriteLine("BAD POSITION, have already guessed, try again");
                         }
+                        if(!isGoodPosition)
+                        {
+                            Console.WriteLine("Out of Bounds position, please shoot again A-H and 1-8 only. ie. h7");
+                        }
                     }
 
-                } while (!isGoodPosition && !quit);
-                isGoodPosition = false;
+                } while (!isRepeatPosition && !quit);
+                isRepeatPosition = false;
 
                 Console.Clear();
 
