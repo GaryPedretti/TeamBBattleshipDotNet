@@ -75,15 +75,17 @@ namespace Battleship.Ascii
                 Console.Write($" {rowLetter} ");
                 for (int col = 0; col < cols; col++)
                 {
-                    if (grid[row,col]== 0)
+                    if (grid[row, col] == 0)
                     {
                         Console.Write($"| ");
-                    } else if (grid[row,col]==1) 
-                    {   
-                        Console.Write($"|X");
-                    } else 
+                    }
+                    else if (grid[row, col] == 1)
                     {
-                       Console.Write($"|0"); 
+                        Console.Write($"|X");
+                    }
+                    else
+                    {
+                        Console.Write($"|0");
                     }
                 }
                 Console.WriteLine();
@@ -107,7 +109,7 @@ namespace Battleship.Ascii
             Console.WriteLine(@"   \    \_/");
             Console.WriteLine(@"    """"""""");
             Console.ResetColor();
-            bool isGoodPosition = false;
+            bool isRepeatPosition = false;
             var position = ParsePosition("a0");
             do
             {
@@ -129,40 +131,52 @@ namespace Battleship.Ascii
                     }
                     else if (input.Contains("m"))
                     {
-                        PrintBattleshipGrid(gameBoard);  
+                        PrintBattleshipGrid(gameBoard);
                     }
                     else
                     {
 
-                        var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
-                        var number = int.Parse(input.Substring(1, 1)) - 1;
 
-                        var sanitizedInput = $"{letter}{number}";
-                        position = ParsePosition(sanitizedInput); 
-                        for (int i = 0; i < gameBoard.GetLength(0); i++)
+                        bool isGoodPosition = isShipInGrid(input);
+
+
+                        if (isGoodPosition)
                         {
-                            char tempLetter = NumberToLetter(i);
-                            for (int j = 0; j < gameBoard.GetLength(1); j++)
+                            var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
+                            var number = int.Parse(input.Substring(1, 1)) - 1;
+                            var sanitizedInput = $"{letter}{number}";
+
+                            position = ParsePosition(sanitizedInput);
+                            for (int i = 0; i < gameBoard.GetLength(0); i++)
                             {
-                                 if (gameBoard[i, j] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
+                                char tempLetter = NumberToLetter(i);
+                                for (int j = 0; j < gameBoard.GetLength(1); j++)
                                 {
-                                    isGoodPosition = true;
-                                    // 1 is hit 
-                                    // 2 is miss
-                                    gameBoard[i, j] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
+                                    if (gameBoard[i, j] == 0 && ArePositionsEqual(ParsePosition($"{tempLetter}{j}"), position))
+                                    {
+                                        isRepeatPosition = true;
+                                        // 1 is hit 
+                                        // 2 is miss
+                                        gameBoard[i, j] = (GameController.CheckIsHit(enemyFleet, position) ? 1 : 2);
+                                    }
                                 }
                             }
                         }
-                        if(!isGoodPosition){
-                          Console.WriteLine("BAD POSITION, have already guessed, try again");
+                        if (!isRepeatPosition)
+                        {
+                            Console.WriteLine("BAD POSITION, have already guessed, try again");
+                        }
+                        if (!isGoodPosition)
+                        {
+                            Console.WriteLine("Out of Bounds position, please shoot again A-H and 1-8 only. ie. h7");
                         }
                     }
-                    
-                }while(!isGoodPosition && !quit);
-                isGoodPosition = false;
-                
+
+                } while (!isRepeatPosition && !quit);
+                isRepeatPosition = false;
+
                 Console.Clear();
-                
+
                 if (!quit)
                 {
                     var isHit = GameController.CheckIsHit(enemyFleet, position);
@@ -184,7 +198,9 @@ namespace Battleship.Ascii
                         Console.WriteLine();
                         Console.WriteLine("Yeah! Nice Hit !");
 
-                    } else {
+                    }
+                    else
+                    {
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("             .       ");
                         Console.WriteLine("       .         .   ");
@@ -195,7 +211,7 @@ namespace Battleship.Ascii
                         Console.WriteLine("     /    |    \\     ");
                         Console.WriteLine("         / \\         ");
                         Console.WriteLine(" ~~~~  ~~~~~~~  ~~~~ ");
-                        Console.WriteLine("    ~~~     ~~~      ");                     
+                        Console.WriteLine("    ~~~     ~~~      ");
                         Console.ResetColor();
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
@@ -226,7 +242,9 @@ namespace Battleship.Ascii
                         Console.WriteLine();
                         Console.WriteLine("They've hit your ship !");
 
-                    } else {
+                    }
+                    else
+                    {
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("             .       ");
                         Console.WriteLine("       .         .   ");
@@ -237,7 +255,7 @@ namespace Battleship.Ascii
                         Console.WriteLine("     /    |    \\     ");
                         Console.WriteLine("         / \\         ");
                         Console.WriteLine(" ~~~~  ~~~~~~~  ~~~~ ");
-                        Console.WriteLine("    ~~~     ~~~      "); 
+                        Console.WriteLine("    ~~~     ~~~      ");
                         Console.ResetColor();
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
@@ -247,23 +265,40 @@ namespace Battleship.Ascii
 
                     }
                 }
-                if(GameController.AllShipsSunk(enemyFleet)){
+                if (GameController.AllShipsSunk(enemyFleet))
+                {
                     Console.WriteLine("Amazing! You sunk all Enemy ships");
                     GameOver();
                 }
-                if(GameController.AllShipsSunk(myFleet)){
+                if (GameController.AllShipsSunk(myFleet))
+                {
                     Console.WriteLine("Loser! All your ships are sunk");
                     GameOver();
                 }
 
-            }while (quit == false);
+            } while (quit == false);
+        }
+        public static bool isShipInGrid(string newPosition)
+        {
+            try{
+            var letter = (Letters)Enum.Parse(typeof(Letters), newPosition.ToUpper().Substring(0, 1));
+            }catch{
+                return false;
+            }
+            var number = int.Parse(newPosition.Substring(1, 1)) - 1;
+            if (newPosition.Length > 2)
+            {
+                return false;
+            }
+            if (number + 1 >= 9 || number + 1 < 1)
+            {
+                return false;
+            }
+            return true;
         }
 
-        public static bool isShipInGrid(Position checkPosition){
-            return false;
-        }
-
-        private static void CrashExit(Exception e) {
+        private static void CrashExit(Exception e)
+        {
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("A serious problem occured. The application cannot continue and will be closed.");
@@ -273,14 +308,15 @@ namespace Battleship.Ascii
             Environment.Exit(0);
         }
 
-        private static void GameOver() {
+        private static void GameOver()
+        {
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Game over. Press any key to exit...");
             Console.ReadKey();
             Environment.Exit(0);
         }
-      
+
         private static char NumberToLetter(int number)
         {
             return (char)('A' + number);
@@ -288,7 +324,7 @@ namespace Battleship.Ascii
 
         public static Position ParsePosition(string input)
         {
-            var letter = (Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
+            var letter = (Battleship.GameController.Contracts.Letters)Enum.Parse(typeof(Letters), input.ToUpper().Substring(0, 1));
             var number = int.Parse(input.Substring(1, 1));
             return new Position(letter, number);
         }
@@ -303,7 +339,7 @@ namespace Battleship.Ascii
             int rows = 8;
             int lines = 8;
             var random = new Random();
-            var letter = (Letters)random.Next(lines);
+            Battleship.GameController.Contracts.Letters letter = (Battleship.GameController.Contracts.Letters)random.Next(lines);
             var number = random.Next(rows);
             var position = new Position(letter, number);
             return position;
