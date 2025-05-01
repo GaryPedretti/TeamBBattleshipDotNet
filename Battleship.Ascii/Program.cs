@@ -118,6 +118,15 @@ namespace Battleship.Ascii
                 do
                 {
                     Console.WriteLine();
+                    var sunkEnemyShips = GameController.SunkShipNames(enemyFleet).ToList();
+                    if (sunkEnemyShips.Any())
+                    {
+                        Console.WriteLine("You have sunk the following enemy ship(s):");
+                        foreach (var shipName in sunkEnemyShips)
+                        {
+                            Console.WriteLine($"- {shipName}");
+                        }
+                    }
                     Console.WriteLine("Player, it's your turn");
                     Console.WriteLine("Enter coordinates for your shot, m to show the grid, or exit to quit:");
 
@@ -180,6 +189,10 @@ namespace Battleship.Ascii
                 if (!quit)
                 {
                     var isHit = GameController.CheckIsHit(enemyFleet, position);
+                    var shotShip = GameController.GetShotShip(enemyFleet, position);
+                    var shipSunk = false;
+                    if(shotShip != null)
+                     shipSunk = GameController.CheckIsSunk(shotShip);
                     telemetryClient.TrackEvent("Player_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                     if (isHit)
                     {
@@ -197,7 +210,9 @@ namespace Battleship.Ascii
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
                         Console.WriteLine("Yeah! Nice Hit !");
-
+                        if(shipSunk){
+                            Console.WriteLine("You just sunk the enemy {0}",shotShip.Name);
+                        }
                     }
                     else
                     {
@@ -220,6 +235,10 @@ namespace Battleship.Ascii
                     }
                     position = GetRandomPosition();
                     isHit = GameController.CheckIsHit(myFleet, position);
+                    shotShip = GameController.GetShotShip(enemyFleet, position);
+                    shipSunk = false;
+                    if(shotShip != null)
+                     shipSunk = GameController.CheckIsSunk(shotShip);
                     telemetryClient.TrackEvent("Computer_ShootPosition", new Dictionary<string, string>() { { "Position", position.ToString() }, { "IsHit", isHit.ToString() } });
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine();
@@ -241,6 +260,9 @@ namespace Battleship.Ascii
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine();
                         Console.WriteLine("They've hit your ship !");
+                        if(shipSunk){
+                            Console.WriteLine("You Just lost your {0}",shotShip.Name); 
+                        }
 
                     }
                     else
@@ -347,6 +369,8 @@ namespace Battleship.Ascii
 
         private static void InitializeGame()
         {
+            // InitializeMyFleet();
+            InitializePlayerTestFleet();
             InitializeMyFleet();
          //   InitializePlayerTestFleet();
 
@@ -364,11 +388,13 @@ namespace Battleship.Ascii
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
             
+            
             foreach (var ship in myFleet)
             {
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
+                for (var i = 1; i <= ship.Size;)
                 for (var i = 1; i <= ship.Size;)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
