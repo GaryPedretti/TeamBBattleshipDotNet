@@ -379,8 +379,6 @@ namespace Battleship.Ascii
 
         private static void InitializeMyFleet()
         {
-            bool badPosition = false;
-            bool useLetter = false;
             
             myFleet = GameController.InitializeShips().ToList();
 
@@ -394,7 +392,6 @@ namespace Battleship.Ascii
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
-                for (var i = 1; i <= ship.Size;)
                 for (var i = 1; i <= ship.Size;)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
