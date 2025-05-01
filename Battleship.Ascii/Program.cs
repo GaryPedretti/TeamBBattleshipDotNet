@@ -347,7 +347,7 @@ namespace Battleship.Ascii
 
         private static void InitializeGame()
         {
-            //InitializeMyFleet();
+            // InitializeMyFleet();
             InitializePlayerTestFleet();
 
             InitializeEnemyFleet();
@@ -360,18 +360,25 @@ namespace Battleship.Ascii
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Please position your fleet (Game board size is from A to H and 1 to 8) :");
-
+            
             foreach (var ship in myFleet)
             {
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Please enter the positions for the {0} (size: {1})", ship.Name, ship.Size);
-                for (var i = 1; i <= ship.Size; i++)
+                for (var i = 1; i <= ship.Size;)
                 {
                     Console.WriteLine("Enter position {0} of {1} (i.e A3):", i, ship.Size);
                     var position = Console.ReadLine();
-                    ship.AddPosition(position);
-                    telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
+                    if (ship.AddPosition(position)) {
+                        telemetryClient.TrackEvent("Player_PlaceShipPosition", new Dictionary<string, string>() { { "Position", position }, { "Ship", ship.Name }, { "PositionInShip", i.ToString() } });
+                        i++;
+                    } else {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine();
+                        Console.WriteLine("Invalid ship placement, ships must be placed in a straight line.");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                    }
                 }
             }
         }

@@ -57,7 +57,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var position = obj as Position;
             if (position == null)
@@ -69,13 +69,19 @@
         }
         public void Hit() => isHit = true;
 
-        public bool IsHit(){
+        public bool IsHit()
+        {
             return isHit;
         }
 
         public override string ToString()
         {
             return Column.ToString() + Row.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Column, Row);
         }
 
         #endregion
