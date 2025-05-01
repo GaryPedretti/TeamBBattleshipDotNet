@@ -407,29 +407,38 @@ namespace Battleship.Ascii
 
         private static void InitializeEnemyFleet()
         {
-            enemyFleet = GameController.InitializeShips().ToList();
+            var ships = GameController.InitializeShips();
+            enemyFleet = ships.ToList();
 
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 1 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 2 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 3 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 4 });
-            enemyFleet[0].Positions.Add(new Position { Column = Letters.A, Row = 5 });
+            Random rnd = new Random();
 
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 3 });
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 4 });
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 5 });
-            enemyFleet[1].Positions.Add(new Position { Column = Letters.A, Row = 6 });
+            var counter = 0;
+            int shipNumber = 0;
+            foreach (var ship in ships)
+            {
+                bool horizontalOrVertial = rnd.NextDouble() >= 0.5;
+                if ( horizontalOrVertial )
+                {
+                    Position shipStart = new Position((Letters)rnd.Next(0,8-ship.Size), rnd.Next(0,8) );
 
-            enemyFleet[2].Positions.Add(new Position { Column = Letters.A, Row = 3 });
-            enemyFleet[2].Positions.Add(new Position { Column = Letters.A, Row = 3 });
-            enemyFleet[2].Positions.Add(new Position { Column = Letters.A, Row = 3 });
+                    for (int i = 0; i < ship.Size; i++)
+                    {
+                        enemyFleet[ shipNumber ].Positions.Add( shipStart );
+                        shipStart.Column += 1 ;
+                    }
 
-            enemyFleet[3].Positions.Add(new Position { Column = Letters.A, Row = 8 });
-            enemyFleet[3].Positions.Add(new Position { Column = Letters.A, Row = 8 });
-            enemyFleet[3].Positions.Add(new Position { Column = Letters.A, Row = 8 });
+                } else
+                {
+                    Position shipStart = new Position((Letters)rnd.Next(0,8), rnd.Next(0,8-ship.Size ) );
+                    for (int i = 0; i < ship.Size; i++)
+                    {
+                        enemyFleet[ shipNumber ].Positions.Add( shipStart );
+                        shipStart.Row += 1 ;
+                    }
+                }
+                shipNumber++;
+            }
 
-            enemyFleet[4].Positions.Add(new Position { Column = Letters.A, Row = 5 });
-            enemyFleet[4].Positions.Add(new Position { Column = Letters.A, Row = 6 });
         }
 
         private static void InitializePlayerTestFleet()
