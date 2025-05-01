@@ -422,8 +422,7 @@ namespace Battleship.Ascii
 
                     for (int i = 0; i < ship.Size; i++)
                     {
-                        enemyFleet[ shipNumber ].Positions.Add( shipStart );
-                        shipStart.Column += 1 ;
+                        enemyFleet[ shipNumber ].Positions.Add( new Position { Column = shipStart.Column + i, Row = shipStart.Row } );
                     }
 
                 } else
@@ -431,8 +430,7 @@ namespace Battleship.Ascii
                     Position shipStart = new Position((Letters)rnd.Next(0,8), rnd.Next(0,8-ship.Size ) );
                     for (int i = 0; i < ship.Size; i++)
                     {
-                        enemyFleet[ shipNumber ].Positions.Add( shipStart );
-                        shipStart.Row += 1 ;
+                        enemyFleet[ shipNumber ].Positions.Add( new Position { Column = shipStart.Column, Row = shipStart.Row + i } );
                     }
                 }
                 shipNumber++;
