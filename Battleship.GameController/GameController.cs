@@ -48,7 +48,7 @@ namespace Battleship.GameController
                     if (position.Equals(shot))
                     {
                         position.Hit();
-                        CheckIsSunk(ship);
+                        
                         return true;
                     }
                 }
@@ -57,6 +57,31 @@ namespace Battleship.GameController
             return false;
         }
 
+        public static Ship GetShotShip(IEnumerable<Ship> ships, Position shot)
+        {
+            if (ships == null)
+            {
+                throw new ArgumentNullException("ships");
+            }
+
+            if (shot == null)
+            {
+                throw new ArgumentNullException("shot");
+            }
+            
+            foreach (var ship in ships)
+            {
+                foreach (var position in ship.Positions)
+                {
+                    if (position.Equals(shot))
+                    {
+                        return ship;
+                    }
+                }
+            }
+
+            return null;
+        }
         /// <summary>
         /// Checks the ship sunk condition.
         /// </summary>
@@ -71,7 +96,7 @@ namespace Battleship.GameController
         ///     or
         ///     shot
         /// </exception>
-        public static void CheckIsSunk(Ship ship)
+        public static bool CheckIsSunk(Ship ship)
         {
             if (ship == null)
             {
@@ -82,10 +107,21 @@ namespace Battleship.GameController
             {
                 if (!position.IsHit())
                 {
-                    return;
+                    return false;
                 }
             }
             ship.IsSunk = true;
+            return true;
+        }
+
+        public static IEnumerable<string> SunkShipNames(IEnumerable<Ship> ships)
+        {
+            if (ships == null)
+            {
+                throw new ArgumentNullException("ships");
+            }
+
+            return ships.Where(ship => ship.IsSunk).Select(ship => ship.Name);
         }
 
         public static bool AllShipsSunk(IEnumerable<Ship> ships)
@@ -120,7 +156,7 @@ namespace Battleship.GameController
                        {
                            new Ship() { Name = "Aircraft Carrier", Size = 5, Color = ConsoleColor.Blue }, 
                            new Ship() { Name = "Battleship", Size = 4, Color = ConsoleColor.Red }, 
-                           new Ship() { Name = "Submarine", Size = 3, Color = ConsoleColor.Gray }, 
+                           new Ship() { Name = "Submarine", Size = 3, Color = ConsoleColor.Gray },
                            new Ship() { Name = "Destroyer", Size = 3, Color = ConsoleColor.Yellow }, 
                            new Ship() { Name = "Patrol Boat", Size = 2, Color = ConsoleColor.Green }
                        };
