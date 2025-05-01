@@ -48,7 +48,6 @@ namespace Battleship.GameController
                     if (position.Equals(shot))
                     {
                         position.Hit();
-                        
                         return true;
                     }
                 }
@@ -157,7 +156,7 @@ namespace Battleship.GameController
                            new Ship() { Name = "Aircraft Carrier", Size = 5, Color = ConsoleColor.Blue }, 
                            new Ship() { Name = "Battleship", Size = 4, Color = ConsoleColor.Red }, 
                            new Ship() { Name = "Submarine", Size = 3, Color = ConsoleColor.Gray },
-                           new Ship() { Name = "Destroyer", Size = 3, Color = ConsoleColor.Yellow }, 
+                           new Ship() { Name = "Destroyer", Size = 3, Color = ConsoleColor.Yellow },
                            new Ship() { Name = "Patrol Boat", Size = 2, Color = ConsoleColor.Green }
                        };
         }
